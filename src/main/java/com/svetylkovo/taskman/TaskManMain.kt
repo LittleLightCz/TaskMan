@@ -14,11 +14,7 @@ object TaskManMain {
         staticFiles.location("/public")
         port(7900)
 
-        get("/") { request, response ->
-            "Hi"
-        }
-
-        get("/hostname") { request, response ->
+        get("/api/hostname") { request, response ->
             InetAddress.getLocalHost().getHostName()
         }
 
