@@ -1,4 +1,4 @@
-package app.hostname
+package app.components
 
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
@@ -24,6 +24,8 @@ class Hostname : RComponent<RProps, HostnameState>() {
             setState {
                 hostname = it.data
             }
+        }.catch { err ->
+            setState { hostname = "?unknown?" }
         }
     }
 
@@ -32,7 +34,10 @@ class Hostname : RComponent<RProps, HostnameState>() {
 
         span {
             if (hostname == null) {
-                i("fa fa-spinner fa-spin") {}
+                small {
+                    +" "
+                    i("fa fa-spinner fa-spin") {}
+                }
             } else {
                 small { +" on " }
                 +hostname

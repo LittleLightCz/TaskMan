@@ -1,6 +1,7 @@
 package app
 
-import app.hostname.hostname
+import app.components.hostname
+import app.components.tasklist.taskList
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -19,10 +20,7 @@ class App : RComponent<RProps, RState>() {
             }
         }
 
-        div("alert alert-success") {
-            +"content ..."
-        }
-
+        taskList()
     }
 }
 

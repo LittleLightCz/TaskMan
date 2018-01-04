@@ -7,6 +7,7 @@ import org.hibernate.cfg.Configuration
 import org.hibernate.service.ServiceRegistryBuilder
 import spark.Spark.*
 import java.net.InetAddress
+import java.util.*
 
 
 object TaskManMain {
@@ -19,13 +20,30 @@ object TaskManMain {
             staticFiles.location("/public")
             port(7900)
 
-            get("/api/hostname") { request, response ->
-                InetAddress.getLocalHost().getHostName()
+            get("/api/hostname") { _, _ ->
+                InetAddress.getLocalHost().hostName
             }
 
-            get("/api/tasks") { request, response ->
+            get("/api/tasks") { _, _ ->
                 val tasks = session.createCriteria(Task::class.java).list()
                 mapper.writeValueAsString(tasks)
+            }
+
+            post("/api/tasks/new") { request, _ ->
+                with(request) {
+                    val task = Task().apply {
+                        name = params("name")
+                        detail = params("detail")
+                        priority = params("priority").toInt()
+                        createdDate = Date()
+                    }
+
+                    session.beginTransaction()
+                    session.persist(task)
+                    session.transaction.commit()
+                }
+
+                "OK"
             }
         }
     }
