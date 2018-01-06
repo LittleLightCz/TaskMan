@@ -31,10 +31,7 @@ object TaskManMain {
 
             post("/api/tasks/new") { request, _ ->
                 with(request) {
-                    val task = Task().apply {
-                        name = params("name")
-                        detail = params("detail")
-                        priority = params("priority").toInt()
+                    val task = mapper.readValue(body(), Task::class.java).apply {
                         createdDate = Date()
                     }
 

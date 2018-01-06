@@ -1,6 +1,9 @@
 package app.components.tasklist
 
 import app.bean.TaskBean
+import app.wrappers.axios.axios
+import kotlinext.js.asJsObject
+import kotlinext.js.jsObject
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
@@ -10,6 +13,7 @@ import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
+import kotlin.js.JSON.stringify
 
 interface AddNewTaskProps : RProps {
     var close: () -> Unit
@@ -27,8 +31,17 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
         submitInProgress = false
     }
 
-    private fun handleNewTaskSubmitClicked(event: Event) {
+    private fun handleSubmitNewTaskClicked(event: Event) {
         setState { submitInProgress = true }
+
+        val task = state.task
+        js("delete task.id")
+
+        axios<String>(jsObject {
+            url = "api/tasks/new"
+            method = "post"
+            data = task
+        }).then { props.close() }
     }
 
     private fun handlePriorityChanged(e: Event) {
@@ -98,7 +111,7 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
                     val submitInProgress = state.submitInProgress
 
                     attrs {
-                        onClickFunction = ::handleNewTaskSubmitClicked
+                        onClickFunction = ::handleSubmitNewTaskClicked
                         disabled = submitInProgress || state.task.name.isBlank()
                     }
 

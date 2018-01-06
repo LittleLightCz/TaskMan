@@ -64,7 +64,10 @@ class TaskList: RComponent<RProps, TaskListState>() {
 
     private fun RBuilder.renderAddTask() {
         if (state.showAddTask) {
-            addNewTask { setState { showAddTask = false } }
+            addNewTask {
+                setState { showAddTask = false }
+                fetchTasks()
+            }
         } else {
             button(type = ButtonType.button, classes = "btn btn-success pull-right") {
                 attrs.onClickFunction = ::handleAddNewTaskClick
