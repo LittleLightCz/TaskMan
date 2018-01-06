@@ -3,7 +3,7 @@ package app.bean
 import kotlin.js.Date
 
 class TaskBean {
-    var id: Long = 0
+    var id: Int = 0
     var name: String = ""
     var detail: String? = null
     var priority: Int = 3

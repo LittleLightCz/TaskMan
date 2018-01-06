@@ -34,13 +34,10 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
     private fun handleSubmitNewTaskClicked(event: Event) {
         setState { submitInProgress = true }
 
-        val task = state.task
-        js("delete task.id")
-
         axios<String>(jsObject {
             url = "api/tasks/new"
             method = "post"
-            data = task
+            data = state.task
         }).then { props.close() }
     }
 

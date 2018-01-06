@@ -13,7 +13,7 @@ import kotlin.browser.window
 import kotlin.js.Promise
 
 interface TaskListState: RState {
-    var tasks: List<TaskBean>?
+    var tasks: Array<TaskBean>?
     var showAddTask: Boolean
 }
 
@@ -42,13 +42,14 @@ class TaskList: RComponent<RProps, TaskListState>() {
         return axios<Array<TaskBean>>(jsObject {
             url = "api/tasks"
         }).then {
-            setState { tasks = it.data.asList() }
+            setState { tasks = it.data }
         }
     }
 
-    private fun getTasks() = state.tasks ?: emptyList()
+    private fun getTasks() = state.tasks ?: emptyArray()
 
     private fun getActiveTasks() = getTasks().filter { !it.deleted && it.completedDate == null }
+            .sortedBy { it.priority }
 
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
@@ -58,7 +59,7 @@ class TaskList: RComponent<RProps, TaskListState>() {
         h2("tasklist-title") { +"Task List" }
 
         getActiveTasks().forEachIndexed { index, taskBean ->
-            task(taskBean, index.toString())
+            task(taskBean, index + 1)
         }
     }
 
