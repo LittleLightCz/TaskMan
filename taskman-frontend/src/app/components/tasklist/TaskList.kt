@@ -5,6 +5,8 @@ import app.components.task.task
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
 import kotlinx.html.ButtonType
+import kotlinx.html.js.onClickFunction
+import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
 import kotlin.browser.window
@@ -14,7 +16,6 @@ interface TaskListState: RState {
     var tasks: List<TaskBean>?
     var showAddTask: Boolean
 }
-
 
 class TaskList: RComponent<RProps, TaskListState>() {
 
@@ -26,11 +27,11 @@ class TaskList: RComponent<RProps, TaskListState>() {
     }
 
     override fun componentDidMount() {
-//        fetchTasks()
+        fetchTasks()
 
         tasksRefreshIntervalID = window.setInterval({
             fetchTasks()
-        }, 3000)
+        }, 5000)
     }
 
     override fun componentWillUnmount() {
@@ -45,7 +46,11 @@ class TaskList: RComponent<RProps, TaskListState>() {
         }
     }
 
-    fun getActiveTasks() = (state.tasks ?: emptyList()).filter { !it.deleted && it.completedDate == null }
+    private fun getTasks() = state.tasks ?: emptyList()
+
+    private fun getActiveTasks() = getTasks().filter { !it.deleted && it.completedDate == null }
+
+    private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
     private fun RBuilder.renderTasks() {
         renderAddTask()
@@ -59,9 +64,10 @@ class TaskList: RComponent<RProps, TaskListState>() {
 
     private fun RBuilder.renderAddTask() {
         if (state.showAddTask) {
-            //addNewTask()
+            addNewTask { setState { showAddTask = false } }
         } else {
             button(type = ButtonType.button, classes = "btn btn-success pull-right") {
+                attrs.onClickFunction = ::handleAddNewTaskClick
                 i("fa fa-plus") {}
                 +" Add new task!"
             }
