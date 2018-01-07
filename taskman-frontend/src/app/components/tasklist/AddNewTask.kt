@@ -7,10 +7,13 @@ import kotlinext.js.jsObject
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onKeyPressFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.InputEvent
+import org.w3c.dom.events.KeyboardEvent
 import react.*
 import react.dom.*
 import kotlin.js.JSON.stringify
@@ -24,6 +27,14 @@ interface AddNewTaskState : RState {
     var submitInProgress: Boolean
 }
 
+val prioritiesMap = mapOf(
+        "Critical" to 1,
+        "Important" to 2,
+        "Normal" to 3,
+        "Not as important" to 4,
+        "Irrelevant" to 5
+)
+
 class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTaskState>(props) {
 
     override fun AddNewTaskState.init(props: AddNewTaskProps) {
@@ -31,14 +42,25 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
         submitInProgress = false
     }
 
-    private fun handleSubmitNewTaskClicked(event: Event) {
-        setState { submitInProgress = true }
+    private fun isSubmitNewTaskDisabled() = state.submitInProgress || state.task.name.isBlank()
 
-        axios<String>(jsObject {
-            url = "api/tasks/new"
-            method = "post"
-            data = state.task
-        }).then { props.close() }
+    private fun handleSubmitNewTaskClicked() {
+        if (!isSubmitNewTaskDisabled()) {
+            setState { submitInProgress = true }
+
+            axios<String>(jsObject {
+                url = "api/tasks/new"
+                method = "post"
+                data = state.task
+            }).then { props.close() }
+        }
+    }
+
+    private fun handleTaskNameKeyPress(event: Event) {
+        val keyboardEvent = event.unsafeCast<KeyboardEvent>()
+        if (keyboardEvent.key == "Enter") {
+            handleSubmitNewTaskClicked()
+        }
     }
 
     private fun handlePriorityChanged(e: Event) {
@@ -69,7 +91,9 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
                             attrs {
                                 placeholder = "Task name"
                                 value = task.name
+                                autoFocus = true
                                 onChangeFunction = ::handleTaskNameChanged
+                                onKeyPressFunction = ::handleTaskNameKeyPress
                             }
                         }
                     }
@@ -81,13 +105,7 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
                                 onChangeFunction = ::handlePriorityChanged
                             }
 
-                            options(
-                                    "Critical" to 1,
-                                    "Important" to 2,
-                                    "Normal" to 3,
-                                    "Not as important" to 4,
-                                    "Irrelevant" to 5
-                            )
+                            options(prioritiesMap)
                         }
                     }
                 }
@@ -106,10 +124,9 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
             div("form-group text-right") {
                 button(classes = "btn btn-success mr-1") {
                     val submitInProgress = state.submitInProgress
-
                     attrs {
-                        onClickFunction = ::handleSubmitNewTaskClicked
-                        disabled = submitInProgress || state.task.name.isBlank()
+                        onClickFunction = { handleSubmitNewTaskClicked() }
+                        disabled = isSubmitNewTaskDisabled()
                     }
 
                     if (submitInProgress) {
@@ -126,11 +143,10 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
             }
         }
     }
-
 }
 
-private fun RBuilder.options(vararg pairs: Pair<String, Int>) {
-    pairs.forEach { (name, value) ->
+private fun RBuilder.options(optionsMap: Map<String, Int>) {
+    optionsMap.forEach { (name, value) ->
         option {
             attrs.value = value.toString()
             +name

@@ -1,7 +1,11 @@
 package app.components.tasklist
 
 import app.bean.TaskBean
+import app.bean.isCompleted
+import app.bean.isNotCompleted
 import app.components.task.task
+import app.components.tasklist.View.FINISHED_TASKS
+import app.components.tasklist.View.ACTIVE_TASKS
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
 import kotlinx.html.ButtonType
@@ -12,9 +16,14 @@ import react.dom.*
 import kotlin.browser.window
 import kotlin.js.Promise
 
+enum class View {
+    ACTIVE_TASKS, FINISHED_TASKS
+}
+
 interface TaskListState: RState {
     var tasks: Array<TaskBean>?
     var showAddTask: Boolean
+    var view: View
 }
 
 class TaskList: RComponent<RProps, TaskListState>() {
@@ -24,6 +33,7 @@ class TaskList: RComponent<RProps, TaskListState>() {
     override fun TaskListState.init() {
         tasks = null
         showAddTask = false
+        view = ACTIVE_TASKS
     }
 
     override fun componentDidMount() {
@@ -48,24 +58,56 @@ class TaskList: RComponent<RProps, TaskListState>() {
 
     private fun getTasks() = state.tasks ?: emptyArray()
 
-    private fun getActiveTasks() = getTasks().filter { !it.deleted && it.completedDate == null }
+    private fun getActiveTasks() = getTasks().filter { !it.deleted && it.isNotCompleted() }
             .sortedWith(
                     compareBy({ it.priority }, { it.createdDate })
             )
 
+    private fun getFinishedTasks() = getTasks().filter { it.deleted || it.isCompleted() }
+            .sortedByDescending { it.completedDate }
+
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
+
+    private fun RBuilder.renderNavigationBar() {
+        fun activeIf(view: View) = if (state.view == view) "active" else ""
+
+        div("pt-5 pb-1") {
+            ul("nav nav-tabs") {
+                li("nav-item") {
+                    a(classes = "nav-link ${activeIf(ACTIVE_TASKS)}", href = "#") {
+                        attrs.onClickFunction = { setState { view = ACTIVE_TASKS }}
+                        +"Task List"
+                    }
+                }
+                li("nav-item") {
+                    a(classes = "nav-link ${activeIf(FINISHED_TASKS)}", href = "#") {
+                        attrs.onClickFunction = { setState { view = FINISHED_TASKS }}
+                        +"Finished Tasks"
+                    }
+                }
+            }
+        }
+    }
 
     private fun RBuilder.renderTasks() {
         renderAddTask()
+        renderNavigationBar()
 
-        h2("tasklist-title") { +"Task List" }
+        val tasks = when (state.view) {
+            ACTIVE_TASKS -> getActiveTasks()
+            FINISHED_TASKS -> getFinishedTasks()
+        }
 
-        getActiveTasks().forEachIndexed { index, taskBean ->
-            task(
-                    taskBean,
-                    index + 1,
-                    onChanged = { fetchTasks() }
-            )
+        if (tasks.isEmpty()) {
+            h5 { +"There are no tasks. Let's add some!" }
+        } else {
+            tasks.forEachIndexed { index, taskBean ->
+                task(
+                        taskBean,
+                        index + 1,
+                        onChanged = { fetchTasks() }
+                )
+            }
         }
     }
 
@@ -96,7 +138,6 @@ class TaskList: RComponent<RProps, TaskListState>() {
             }
         }
     }
-
 
 }
 

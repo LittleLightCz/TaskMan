@@ -1,12 +1,15 @@
 package app.components.task
 
 import app.bean.TaskBean
+import app.bean.isCompleted
+import app.components.tasklist.prioritiesMap
 import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
 import kotlinx.html.DIV
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.onClick
+import kotlinx.html.title
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -23,7 +26,6 @@ interface TaskProps : RProps {
     var onTaskChanged: () -> Unit
 }
 
-
 class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
 
     override fun TaskState.init(props: TaskProps) {
@@ -31,7 +33,11 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         showDetails = false
     }
 
-    fun getAlertClassType() = when (props.task.priority) {
+    private fun getPriorityName() = prioritiesMap.entries
+            .find { it.value == props.task.priority }
+            ?.key ?: "Unknown"
+
+    private fun getAlertClassType() = when (props.task.priority) {
         1 -> "danger"
         2 -> "warning"
         3 -> "success"
@@ -73,31 +79,75 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         }
     }
 
+    private fun handleRestoreTaskClick(event: Event) {
+        //todo
+    }
+
+    private fun handleDeletetTaskClick(event: Event) {
+        //todo
+    }
+
     private fun RBuilder.renderTaskDetails() {
         if (state.showDetails) {
-            +"${props.task.detail}"
+            div("text-left") {
+                hr { }
+                if (props.task.detail == null) {
+                    i { +"No details were specified." }
+                } else {
+                    h5 { +"Details:" }
+                    div { +"${props.task.detail}" }
+                }
+            }
         }
     }
 
-    private fun RDOMBuilder<DIV>.renderTaskButtons() {
-        if (state.updatingTask) {
-            strong {
+    private fun RBuilder.renderTaskButtons() {
+        when {
+            state.updatingTask -> strong {
                 +"Updating ... "
                 i("fa fa-spinner fa-spin") {}
             }
-        } else {
-            button(classes = "btn btn-outline-dark mr-1") {
-                attrs.onClickFunction = ::handleDeescalateClick
-                i("fa fa-caret-square-o-down") {}
+            props.task.isCompleted() -> {
+                button(classes = "btn btn-outline-dark btn-sm mr-1") {
+                    attrs.title = "Restore"
+                    attrs.onClickFunction = ::handleRestoreTaskClick
+                    i("fa fa-undo") {}
+                }
+                button(classes = "btn btn-outline-danger btn-sm") {
+                    attrs.title = "Delete permanently"
+                    attrs.onClickFunction = ::handleDeletetTaskClick
+                    i("fa fa-trash") {}
+                }
             }
-            button(classes = "btn btn-outline-dark mr-1") {
-                attrs.onClickFunction = ::handleEscalateClick
-                i("fa fa-caret-square-o-up") {}
+            else -> {
+                button(classes = "btn btn-outline-dark btn-sm mr-1") {
+                    attrs.title = "Deescalate"
+                    attrs.onClickFunction = ::handleDeescalateClick
+                    i("fa fa-caret-square-o-down") {}
+                }
+                button(classes = "btn btn-outline-dark btn-sm mr-1") {
+                    attrs.title = "Escalate"
+                    attrs.onClickFunction = ::handleEscalateClick
+                    i("fa fa-caret-square-o-up") {}
+                }
+                button(classes = "btn btn-outline-success btn-sm") {
+                    attrs.title = "Mark as finished!"
+                    attrs.onClickFunction = ::handleTaskDoneClick
+                    i("fa fa-check") {}
+                }
             }
-            button(classes = "btn btn-outline-success") {
-                attrs.onClickFunction = ::handleTaskDoneClick
-                i("fa fa-check") {}
-            }
+        }
+    }
+
+    private fun RBuilder.renderTimeAgo() {
+        val task = props.task
+        val timestamp = if (task.isCompleted()) task.completedDate else task.createdDate
+        span("ml-auto pt-1") { +"${moment(timestamp).fromNow()}" }
+    }
+
+    private fun RBuilder.renderPriorityBadge() {
+        span("badge badge-${getAlertClassType()} p-2") {
+            +getPriorityName()
         }
     }
 
@@ -115,15 +165,14 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                     }
                 }
                 div("d-flex flex-row mt-1") {
-                    span("ml-auto") { +"${moment(createdDate).fromNow()}" }
+                    renderPriorityBadge()
+                    renderTimeAgo()
                 }
-                div("d-flex flex-row") {
-                    renderTaskDetails()
-                }
+
+                renderTaskDetails()
             }
         }
     }
-
 }
 
 fun RBuilder.task(task: TaskBean, order: Int, onChanged: () -> Unit) = child(Task::class) {
