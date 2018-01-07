@@ -49,7 +49,9 @@ class TaskList: RComponent<RProps, TaskListState>() {
     private fun getTasks() = state.tasks ?: emptyArray()
 
     private fun getActiveTasks() = getTasks().filter { !it.deleted && it.completedDate == null }
-            .sortedBy { it.priority }
+            .sortedWith(
+                    compareBy({ it.priority }, { it.createdDate })
+            )
 
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
@@ -59,7 +61,11 @@ class TaskList: RComponent<RProps, TaskListState>() {
         h2("tasklist-title") { +"Task List" }
 
         getActiveTasks().forEachIndexed { index, taskBean ->
-            task(taskBean, index + 1)
+            task(
+                    taskBean,
+                    index + 1,
+                    onChanged = { fetchTasks() }
+            )
         }
     }
 

@@ -42,7 +42,39 @@ object TaskManMain {
 
                 "OK"
             }
+
+            post("/api/task/done/:id") { req, _ ->
+                val id = req.params(":id")
+                session.updateTask(id.toLong()) {
+                    it.completedDate = Date()
+                }
+                "OK"
+            }
+
+            post("/api/task/escalate/:id") { req, _ ->
+                val id = req.params(":id")
+                session.updateTask(id.toLong()) { task ->
+                    if (task.priority > 1) task.priority--
+                }
+                "OK"
+            }
+
+            post("/api/task/deescalate/:id") { req, _ ->
+                val id = req.params(":id")
+                session.updateTask(id.toLong()) { task ->
+                    if (task.priority < 5) task.priority++
+                }
+                "OK"
+            }
         }
+    }
+
+    private fun Session.updateTask(id: Long, action: (Task) -> Unit) {
+        beginTransaction()
+        val task = get(Task::class.java, id) as Task
+        action(task)
+        update(task)
+        transaction.commit()
     }
 
     private fun obtainHibernateSession(): Session? {

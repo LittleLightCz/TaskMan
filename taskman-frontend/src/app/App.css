@@ -16,3 +16,7 @@ body {
 .App-ticker {
   font-size: medium;
 }
+
+.clickable {
+    cursor: pointer;
+}

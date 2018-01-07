@@ -103,8 +103,8 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
                 }
             }
 
-            div("form-group") {
-                button(classes = "btn btn-success") {
+            div("form-group text-right") {
+                button(classes = "btn btn-success mr-1") {
                     val submitInProgress = state.submitInProgress
 
                     attrs {
