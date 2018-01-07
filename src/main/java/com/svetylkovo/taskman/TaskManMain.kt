@@ -6,7 +6,9 @@ import org.hibernate.Session
 import org.hibernate.cfg.Configuration
 import org.hibernate.service.ServiceRegistryBuilder
 import spark.Spark.*
+import java.awt.Desktop
 import java.net.InetAddress
+import java.net.URI
 import java.util.*
 
 
@@ -17,8 +19,10 @@ object TaskManMain {
     @JvmStatic
     fun main(args: Array<String>) {
         obtainHibernateSession()?.let { session ->
-            staticFiles.location("/public")
-            port(7900)
+            val serverPort = 7900
+            staticFiles.location("/build")
+
+            port(serverPort)
 
             get("/api/hostname") { _, _ ->
                 InetAddress.getLocalHost().hostName
@@ -66,6 +70,14 @@ object TaskManMain {
                 }
                 "OK"
             }
+
+            launchDefaultBrowser(serverPort)
+        }
+    }
+
+    private fun launchDefaultBrowser(port: Int) {
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().browse(URI("http://localhost:$port"))
         }
     }
 
