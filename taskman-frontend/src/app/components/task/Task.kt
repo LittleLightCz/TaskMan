@@ -61,6 +61,24 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         }
     }
 
+    private fun handleSuspendTaskClick(event: Event) {
+        taskUpdateAction {
+            axios<Unit>(jsObject {
+                url = "api/task/suspend/${props.task.id}"
+                method = "post"
+            }).then { props.onTaskChanged() }
+        }
+    }
+
+    private fun handleUnsuspendTaskClick(event: Event) {
+        taskUpdateAction {
+            axios<Unit>(jsObject {
+                url = "api/task/unsuspend/${props.task.id}"
+                method = "post"
+            }).then { props.onTaskChanged() }
+        }
+    }
+
     private fun handleDeescalateClick(event: Event) {
         taskUpdateAction {
             axios<Unit>(jsObject {
@@ -102,40 +120,82 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
     }
 
     private fun RBuilder.renderTaskButtons() {
+        val task = props.task
+
         when {
             state.updatingTask -> strong {
                 +"Updating ... "
                 i("fa fa-spinner fa-spin") {}
             }
-            props.task.isCompleted() -> {
-                button(classes = "btn btn-outline-dark btn-sm mr-1") {
-                    attrs.title = "Restore"
-                    attrs.onClickFunction = ::handleRestoreTaskClick
-                    i("fa fa-undo") {}
-                }
-                button(classes = "btn btn-outline-danger btn-sm") {
-                    attrs.title = "Delete permanently"
-                    attrs.onClickFunction = ::handleDeletetTaskClick
-                    i("fa fa-trash") {}
-                }
+            task.isCompleted() -> {
+                renderRestoreButton()
+                renderDeleteButton()
+            }
+            task.suspended -> {
+                renderUnsuspendButton()
             }
             else -> {
-                button(classes = "btn btn-outline-dark btn-sm mr-1") {
-                    attrs.title = "Deescalate"
-                    attrs.onClickFunction = ::handleDeescalateClick
-                    i("fa fa-caret-square-o-down") {}
-                }
-                button(classes = "btn btn-outline-dark btn-sm mr-1") {
-                    attrs.title = "Escalate"
-                    attrs.onClickFunction = ::handleEscalateClick
-                    i("fa fa-caret-square-o-up") {}
-                }
-                button(classes = "btn btn-outline-success btn-sm") {
-                    attrs.title = "Mark as finished!"
-                    attrs.onClickFunction = ::handleTaskDoneClick
-                    i("fa fa-check") {}
-                }
+                renderDeescalateButton()
+                renderEscalateButton()
+                renderSuspendButton()
+                renderFinishTaskButton()
             }
+        }
+    }
+
+    private fun RBuilder.renderSuspendButton() {
+        button(classes = "btn btn-outline-primary btn-sm mr-1") {
+            attrs.title = "Suspend task"
+            attrs.onClickFunction = ::handleSuspendTaskClick
+            i("fa fa-power-off") {}
+        }
+    }
+
+    private fun RBuilder.renderUnsuspendButton() {
+        button(classes = "btn btn-outline-success btn-sm mr-1") {
+            attrs.title = "Unsuspend task"
+            attrs.onClickFunction = ::handleUnsuspendTaskClick
+            i("fa fa-power-off") {}
+        }
+    }
+
+    private fun RBuilder.renderFinishTaskButton() {
+        button(classes = "btn btn-outline-success btn-sm") {
+            attrs.title = "Mark as finished!"
+            attrs.onClickFunction = ::handleTaskDoneClick
+            i("fa fa-check") {}
+        }
+    }
+
+    private fun RBuilder.renderEscalateButton() {
+        button(classes = "btn btn-outline-dark btn-sm mr-1") {
+            attrs.title = "Escalate"
+            attrs.onClickFunction = ::handleEscalateClick
+            i("fa fa-caret-square-o-up") {}
+        }
+    }
+
+    private fun RBuilder.renderDeescalateButton() {
+        button(classes = "btn btn-outline-dark btn-sm mr-1") {
+            attrs.title = "Deescalate"
+            attrs.onClickFunction = ::handleDeescalateClick
+            i("fa fa-caret-square-o-down") {}
+        }
+    }
+
+    private fun RBuilder.renderDeleteButton() {
+        button(classes = "btn btn-outline-danger btn-sm") {
+            attrs.title = "Delete permanently"
+            attrs.onClickFunction = ::handleDeletetTaskClick
+            i("fa fa-trash") {}
+        }
+    }
+
+    private fun RBuilder.renderRestoreButton() {
+        button(classes = "btn btn-outline-dark btn-sm mr-1") {
+            attrs.title = "Restore"
+            attrs.onClickFunction = ::handleRestoreTaskClick
+            i("fa fa-undo") {}
         }
     }
 
@@ -157,8 +217,12 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                 div("d-flex flex-row") {
                     h4("clickable m-0") {
                         attrs.onClickFunction = { setState { showDetails = !showDetails } }
-                        strong { +"${props.order}." }
-                        +" $name"
+
+                        if (!suspended && !isCompleted()) {
+                            strong { +"${props.order}. " }
+                        }
+
+                        +name
                     }
                     div("ml-auto") {
                         renderTaskButtons()

@@ -16,6 +16,9 @@ import react.dom.*
 import kotlin.browser.window
 import kotlin.js.Promise
 
+@JsModule("src/images/cat.png")
+external val catImage: dynamic
+
 enum class View {
     ACTIVE_TASKS, FINISHED_TASKS
 }
@@ -58,13 +61,16 @@ class TaskList: RComponent<RProps, TaskListState>() {
 
     private fun getTasks() = state.tasks ?: emptyArray()
 
-    private fun getActiveTasks() = getTasks().filter { !it.deleted && it.isNotCompleted() }
+    private fun getActiveTasks() = getTasks().filter { !it.suspended && it.isNotCompleted() }
             .sortedWith(
                     compareBy({ it.priority }, { it.createdDate })
             )
 
-    private fun getFinishedTasks() = getTasks().filter { it.deleted || it.isCompleted() }
+    private fun getFinishedTasks() = getTasks().filter { it.isCompleted() }
             .sortedByDescending { it.completedDate }
+
+    private fun getSuspendedTasks() = getTasks().filter { it.suspended }
+            .sortedByDescending { it.createdDate }
 
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
@@ -89,24 +95,42 @@ class TaskList: RComponent<RProps, TaskListState>() {
         }
     }
 
-    private fun RBuilder.renderTasks() {
-        renderAddTask()
-        renderNavigationBar()
+    private fun RBuilder.renderActiveTasks() {
+        renderTasks(getActiveTasks(), "There are no tasks. Let's add some!")
+    }
 
-        val tasks = when (state.view) {
-            ACTIVE_TASKS -> getActiveTasks()
-            FINISHED_TASKS -> getFinishedTasks()
-        }
+    private fun RBuilder.renderFinishedTasks() {
+        renderTasks(getFinishedTasks(), "There are no tasks. Let's finish some!")
+    }
 
+    private fun RBuilder.renderTasks(tasks: List<TaskBean>, messageOnEmpty: String) {
         if (tasks.isEmpty()) {
-            h5 { +"There are no tasks. Let's add some!" }
+            h5 { +messageOnEmpty }
         } else {
-            tasks.forEachIndexed { index, taskBean ->
-                task(
-                        taskBean,
-                        index + 1,
-                        onChanged = { fetchTasks() }
-                )
+            renderTasksIndexed(tasks)
+        }
+    }
+
+    private fun RBuilder.renderTasksIndexed(tasks: List<TaskBean>) {
+        tasks.forEachIndexed { index, taskBean ->
+            task(
+                    taskBean,
+                    index + 1,
+                    onChanged = { fetchTasks() }
+            )
+        }
+    }
+
+    private fun RBuilder.renderSuspendedTasks() {
+        val tasks = getSuspendedTasks()
+
+        if (!tasks.isEmpty()) {
+            div("mt-3") {
+                h3 { +"Suspended tasks" }
+                img(src = catImage) {
+                    attrs.width = "50px"
+                }
+                renderTasksIndexed(tasks)
             }
         }
     }
@@ -134,7 +158,16 @@ class TaskList: RComponent<RProps, TaskListState>() {
                     i("fa fa-spinner fa-spin") { }
                 }
             } else {
-                renderTasks()
+                renderAddTask()
+                renderNavigationBar()
+
+                when (state.view) {
+                    ACTIVE_TASKS -> {
+                        renderActiveTasks()
+                        renderSuspendedTasks()
+                    }
+                    FINISHED_TASKS -> renderFinishedTasks()
+                }
             }
         }
     }

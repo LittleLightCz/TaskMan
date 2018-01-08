@@ -71,6 +71,18 @@ object TaskManMain {
                 "OK"
             }
 
+            post("/api/task/suspend/:id") { req, _ ->
+                val id = req.params(":id")
+                session.updateTask(id.toLong()) { it.suspended = true }
+                "OK"
+            }
+
+            post("/api/task/unsuspend/:id") { req, _ ->
+                val id = req.params(":id")
+                session.updateTask(id.toLong()) { it.suspended = false }
+                "OK"
+            }
+
             launchDefaultBrowser(serverPort)
         }
     }

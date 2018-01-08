@@ -16,5 +16,5 @@ class Task {
     var priority: Int = 0
     var createdDate: Date? = null
     var completedDate: Date? = null
-    var deleted: Boolean = false
+    var suspended: Boolean = false
 }

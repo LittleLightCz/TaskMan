@@ -7,7 +7,7 @@ class TaskBean {
     var priority: Int = 3
     var createdDate: Int = 0
     var completedDate: Int? = null
-    var deleted: Boolean = false
+    var suspended: Boolean = false
 
 }
 
