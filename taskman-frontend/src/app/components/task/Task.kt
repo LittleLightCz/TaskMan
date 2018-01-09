@@ -99,11 +99,21 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
     }
 
     private fun handleRestoreTaskClick(event: Event) {
-        //todo
+        taskUpdateAction {
+            axios<Unit>(jsObject {
+                url = "api/task/restore/${props.task.id}"
+                method = "post"
+            }).then { props.onTaskChanged() }
+        }
     }
 
-    private fun handleDeletetTaskClick(event: Event) {
-        //todo
+    private fun handleDeleteTaskClick(event: Event) {
+        taskUpdateAction {
+            axios<Unit>(jsObject {
+                url = "api/task/delete/${props.task.id}"
+                method = "post"
+            }).then { props.onTaskChanged() }
+        }
     }
 
     private fun RBuilder.renderTaskDetails() {
@@ -194,7 +204,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
     private fun RBuilder.renderDeleteButton() {
         button(classes = "btn btn-outline-danger btn-sm") {
             attrs.title = "Delete permanently"
-            attrs.onClickFunction = ::handleDeletetTaskClick
+            attrs.onClickFunction = ::handleDeleteTaskClick
             i("fa fa-trash") {}
         }
     }

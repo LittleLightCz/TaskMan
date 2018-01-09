@@ -33,28 +33,33 @@ object TaskManMain {
                 mapper.writeValueAsString(tasks)
             }
 
-            post("/api/tasks/new") { request, _ ->
-                with(request) {
-                    val task = mapper.readValue(body(), Task::class.java).apply {
-                        createdDate = Date()
-                    }
+            post("/api/tasks/new") { req, _ ->
+                val task = mapper.readValue(req.body(), Task::class.java).apply {
+                    createdDate = Date()
+                }
 
-                    session.beginTransaction()
-                    session.persist(task)
-                    session.transaction.commit()
+                session.beginTransaction()
+                session.persist(task)
+                session.transaction.commit()
+                "OK"
+            }
+
+            post("/api/tasks/update") { req, _ ->
+                val task = mapper.readValue(req.body(), Task::class.java)
+                session.updateTask(task.id) {
+                    it.name = task.name
+                    it.detail = task.detail
+                    it.priority = task.priority
                 }
                 "OK"
             }
 
-            post("/api/tasks/update") { request, _ ->
-                with(request) {
-                    val task = mapper.readValue(body(), Task::class.java)
-                    session.updateTask(task.id) {
-                        it.name = task.name
-                        it.detail = task.detail
-                        it.priority = task.priority
-                    }
-                }
+            post("/api/task/delete/:id") { req, _ ->
+                session.beginTransaction()
+                val id = req.params(":id")
+                val task = session.get(Task::class.java, id.toLong()) as Task
+                session.delete(task)
+                session.transaction.commit()
                 "OK"
             }
 
@@ -85,6 +90,11 @@ object TaskManMain {
             updateTaskWhen("/api/task/suspend/:id") { it.suspended = true }
 
             updateTaskWhen("/api/task/unsuspend/:id") { it.suspended = false }
+
+            updateTaskWhen("/api/task/restore/:id") {
+                it.createdDate = Date()
+                it.completedDate = null
+            }
 
             //Launch browser
             launchDefaultBrowser(serverPort)
