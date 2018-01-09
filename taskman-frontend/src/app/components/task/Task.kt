@@ -214,7 +214,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
     override fun RBuilder.render() {
         with(props.task) {
             div("alert alert-${getAlertClassType()} m-0 d-flex flex-column") {
-                div("d-flex flex-row") {
+                div("d-flex flex-row text-left") {
                     h4("clickable m-0") {
                         attrs.onClickFunction = { setState { showDetails = !showDetails } }
 
@@ -224,7 +224,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
 
                         +name
                     }
-                    div("ml-auto") {
+                    div("ml-auto flex-no-shrink") {
                         renderTaskButtons()
                     }
                 }

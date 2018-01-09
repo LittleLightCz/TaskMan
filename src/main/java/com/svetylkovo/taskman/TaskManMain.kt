@@ -47,42 +47,35 @@ object TaskManMain {
                 "OK"
             }
 
-            post("/api/task/done/:id") { req, _ ->
-                val id = req.params(":id")
-                session.updateTask(id.toLong()) {
-                    it.completedDate = Date()
+            /**
+             * Update routes
+             */
+
+            fun updateTaskWhen(postPath: String, taskMutation: (Task) -> Unit) {
+                post(postPath) { req, _ ->
+                    val id = req.params(":id")
+                    session.updateTask(id.toLong(), taskMutation)
+                    "OK"
                 }
-                "OK"
             }
 
-            post("/api/task/escalate/:id") { req, _ ->
-                val id = req.params(":id")
-                session.updateTask(id.toLong()) { task ->
-                    if (task.priority > 1) task.priority--
-                }
-                "OK"
+            updateTaskWhen("/api/task/done/:id") {
+                it.completedDate = Date()
             }
 
-            post("/api/task/deescalate/:id") { req, _ ->
-                val id = req.params(":id")
-                session.updateTask(id.toLong()) { task ->
-                    if (task.priority < 5) task.priority++
-                }
-                "OK"
+            updateTaskWhen("/api/task/escalate/:id") { task ->
+                if (task.priority > 1) task.priority--
             }
 
-            post("/api/task/suspend/:id") { req, _ ->
-                val id = req.params(":id")
-                session.updateTask(id.toLong()) { it.suspended = true }
-                "OK"
+            updateTaskWhen("/api/task/deescalate/:id") { task ->
+                if (task.priority < 5) task.priority++
             }
 
-            post("/api/task/unsuspend/:id") { req, _ ->
-                val id = req.params(":id")
-                session.updateTask(id.toLong()) { it.suspended = false }
-                "OK"
-            }
+            updateTaskWhen("/api/task/suspend/:id") { it.suspended = true }
 
+            updateTaskWhen("/api/task/unsuspend/:id") { it.suspended = false }
+
+            //Launch browser
             launchDefaultBrowser(serverPort)
         }
     }

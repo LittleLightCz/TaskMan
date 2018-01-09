@@ -20,3 +20,7 @@ body {
 .clickable {
     cursor: pointer;
 }
+
+.flex-no-shrink {
+    flex-shrink: 0;
+}

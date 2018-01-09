@@ -127,7 +127,7 @@ class TaskList: RComponent<RProps, TaskListState>() {
         if (!tasks.isEmpty()) {
             div("mt-3") {
                 h3 { +"Suspended tasks" }
-                img(src = catImage) {
+                img(src = catImage, classes = "mb-1") {
                     attrs.width = "50px"
                 }
                 renderTasksIndexed(tasks)
