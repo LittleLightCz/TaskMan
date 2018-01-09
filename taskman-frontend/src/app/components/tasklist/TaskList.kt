@@ -4,6 +4,7 @@ import app.bean.TaskBean
 import app.bean.isCompleted
 import app.bean.isNotCompleted
 import app.components.task.task
+import app.components.taskeditor.taskEditor
 import app.components.tasklist.View.FINISHED_TASKS
 import app.components.tasklist.View.ACTIVE_TASKS
 import app.wrappers.axios.axios
@@ -137,7 +138,8 @@ class TaskList: RComponent<RProps, TaskListState>() {
 
     private fun RBuilder.renderAddTask() {
         if (state.showAddTask) {
-            addNewTask {
+            h3 { +"Give that boy a task!" }
+            taskEditor {
                 setState { showAddTask = false }
                 fetchTasks()
             }

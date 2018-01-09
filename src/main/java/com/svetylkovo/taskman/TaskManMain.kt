@@ -43,7 +43,18 @@ object TaskManMain {
                     session.persist(task)
                     session.transaction.commit()
                 }
+                "OK"
+            }
 
+            post("/api/tasks/update") { request, _ ->
+                with(request) {
+                    val task = mapper.readValue(body(), Task::class.java)
+                    session.updateTask(task.id) {
+                        it.name = task.name
+                        it.detail = task.detail
+                        it.priority = task.priority
+                    }
+                }
                 "OK"
             }
 

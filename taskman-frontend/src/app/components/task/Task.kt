@@ -2,13 +2,12 @@ package app.components.task
 
 import app.bean.TaskBean
 import app.bean.isCompleted
-import app.components.tasklist.prioritiesMap
+import app.components.taskeditor.prioritiesMap
+import app.components.taskeditor.taskEditor
 import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
-import kotlinx.html.DIV
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.onClick
 import kotlinx.html.title
 import org.w3c.dom.events.Event
 import react.*
@@ -16,8 +15,9 @@ import react.dom.*
 import kotlin.js.Promise
 
 interface TaskState : RState {
-    var updatingTask: Boolean
     var showDetails: Boolean
+    var showEditor: Boolean
+    var updatingTask: Boolean
 }
 
 interface TaskProps : RProps {
@@ -29,8 +29,9 @@ interface TaskProps : RProps {
 class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
 
     override fun TaskState.init(props: TaskProps) {
-        updatingTask = false
         showDetails = false
+        showEditor = false
+        updatingTask = false
     }
 
     private fun getPriorityName() = prioritiesMap.entries
@@ -114,6 +115,13 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                 } else {
                     h5 { +"Details:" }
                     div { +"${props.task.detail}" }
+                }
+            }
+            div("text-right") {
+                button(classes = "btn btn-secondary") {
+                    attrs.onClickFunction = { setState { showEditor = true } }
+                    i("fa fa-pencil-square-o") {}
+                    +" Edit"
                 }
             }
         }
@@ -212,28 +220,36 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
     }
 
     override fun RBuilder.render() {
-        with(props.task) {
-            div("alert alert-${getAlertClassType()} m-0 d-flex flex-column") {
-                div("d-flex flex-row text-left") {
-                    h4("clickable m-0") {
-                        attrs.onClickFunction = { setState { showDetails = !showDetails } }
+        when {
+            state.showEditor -> div("mt-2 mb-2") {
+                taskEditor(props.task) {
+                    setState { showEditor = false }
+                    props.onTaskChanged()
+                }
+            }
+            else -> with(props.task) {
+                div("alert alert-${getAlertClassType()} m-0 d-flex flex-column") {
+                    div("d-flex flex-row text-left") {
+                        h4("clickable m-0") {
+                            attrs.onClickFunction = { setState { showDetails = !showDetails } }
 
-                        if (!suspended && !isCompleted()) {
-                            strong { +"${props.order}. " }
+                            if (!suspended && !isCompleted()) {
+                                strong { +"${props.order}. " }
+                            }
+
+                            +name
                         }
-
-                        +name
+                        div("ml-auto flex-no-shrink") {
+                            renderTaskButtons()
+                        }
                     }
-                    div("ml-auto flex-no-shrink") {
-                        renderTaskButtons()
+                    div("d-flex flex-row mt-1") {
+                        renderPriorityBadge()
+                        renderTimeAgo()
                     }
-                }
-                div("d-flex flex-row mt-1") {
-                    renderPriorityBadge()
-                    renderTimeAgo()
-                }
 
-                renderTaskDetails()
+                    renderTaskDetails()
+                }
             }
         }
     }

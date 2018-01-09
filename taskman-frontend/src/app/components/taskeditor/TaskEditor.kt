@@ -1,8 +1,7 @@
-package app.components.tasklist
+package app.components.taskeditor
 
 import app.bean.TaskBean
 import app.wrappers.axios.axios
-import kotlinext.js.asJsObject
 import kotlinext.js.jsObject
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
@@ -12,17 +11,16 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.events.Event
-import org.w3c.dom.events.InputEvent
 import org.w3c.dom.events.KeyboardEvent
 import react.*
 import react.dom.*
-import kotlin.js.JSON.stringify
 
-interface AddNewTaskProps : RProps {
-    var close: () -> Unit
+interface TaskEditorProps : RProps {
+    var task: TaskBean?
+    var onClose: () -> Unit
 }
 
-interface AddNewTaskState : RState {
+interface TaskEditorState : RState {
     var task: TaskBean
     var submitInProgress: Boolean
 }
@@ -35,31 +33,35 @@ val prioritiesMap = mapOf(
         "Irrelevant" to 5
 )
 
-class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTaskState>(props) {
+class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEditorState>(props) {
 
-    override fun AddNewTaskState.init(props: AddNewTaskProps) {
-        task = TaskBean()
+    override fun TaskEditorState.init(props: TaskEditorProps) {
+        task = props.task ?: TaskBean()
         submitInProgress = false
     }
 
+    private fun existingTask() = (props.task?.id ?: 0) > 0
+
     private fun isSubmitNewTaskDisabled() = state.submitInProgress || state.task.name.isBlank()
 
-    private fun handleSubmitNewTaskClicked() {
+    private fun handleSubmitTaskClicked() {
         if (!isSubmitNewTaskDisabled()) {
             setState { submitInProgress = true }
 
+            val reqUrl = if (existingTask()) "api/tasks/update" else "api/tasks/new"
+
             axios<String>(jsObject {
-                url = "api/tasks/new"
+                url = reqUrl
                 method = "post"
                 data = state.task
-            }).then { props.close() }
+            }).then { props.onClose() }
         }
     }
 
     private fun handleTaskNameKeyPress(event: Event) {
         val keyboardEvent = event.unsafeCast<KeyboardEvent>()
         if (keyboardEvent.key == "Enter") {
-            handleSubmitNewTaskClicked()
+            handleSubmitTaskClicked()
         }
     }
 
@@ -82,8 +84,6 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
         val task = state.task
 
         div {
-            h3 { +"Give that boy a task!" }
-
             div("form-group") {
                 div("form-row") {
                     div("col") {
@@ -122,24 +122,27 @@ class AddNewTask(props: AddNewTaskProps) : RComponent<AddNewTaskProps, AddNewTas
             }
 
             div("form-group text-right") {
-                button(classes = "btn btn-success mr-1") {
-                    val submitInProgress = state.submitInProgress
-                    attrs {
-                        onClickFunction = { handleSubmitNewTaskClicked() }
-                        disabled = isSubmitNewTaskDisabled()
-                    }
-
-                    if (submitInProgress) {
-                        i("fa fa-spinner fa-spin") {  }
-                        +" Submitting ..."
-                    } else {
-                        +"Submit"
-                    }
-                }
+                renderSubmitButton()
                 button(classes = "btn btn-light") {
-                    attrs.onClickFunction = { props.close() }
+                    attrs.onClickFunction = { props.onClose() }
                     +"Close"
                 }
+            }
+        }
+    }
+
+    private fun RBuilder.renderSubmitButton() {
+        button(classes = "btn btn-success mr-1") {
+            attrs {
+                onClickFunction = { handleSubmitTaskClicked() }
+                disabled = isSubmitNewTaskDisabled()
+            }
+
+            if (state.submitInProgress) {
+                i("fa fa-spinner fa-spin") { }
+                +" Submitting ..."
+            } else {
+                +"Submit"
             }
         }
     }
@@ -154,6 +157,7 @@ private fun RBuilder.options(optionsMap: Map<String, Int>) {
     }
 }
 
-fun RBuilder.addNewTask(close: () -> Unit) = child(AddNewTask::class) {
-    attrs.close = close
+fun RBuilder.taskEditor(task: TaskBean? = null, onClose: () -> Unit) = child(TaskEditor::class) {
+    attrs.task = task
+    attrs.onClose = onClose
 }
