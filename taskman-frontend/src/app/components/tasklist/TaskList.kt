@@ -126,7 +126,7 @@ class TaskList: RComponent<RProps, TaskListState>() {
         return when {
             "hours" in daysAgo -> "Today"
             daysAgo == "2 days ago" -> "Yesterday"
-            else -> trimmedDate.format("dddd Do")
+            else -> trimmedDate.format("dddd Do").toString()
         }
     }
 
