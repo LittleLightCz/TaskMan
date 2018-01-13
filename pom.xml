@@ -6,7 +6,7 @@
 
     <groupId>com.svetylkovo</groupId>
     <artifactId>TaskMan</artifactId>
-    <version>1.0</version>
+    <version>Fresh</version>
 
     <properties>
         <kotlin.version>1.2.10</kotlin.version>
