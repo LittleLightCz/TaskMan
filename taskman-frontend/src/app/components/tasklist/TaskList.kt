@@ -5,9 +5,10 @@ import app.bean.isCompleted
 import app.bean.isNotCompleted
 import app.components.task.task
 import app.components.taskeditor.taskEditor
-import app.components.tasklist.View.FINISHED_TASKS
 import app.components.tasklist.View.ACTIVE_TASKS
+import app.components.tasklist.View.FINISHED_TASKS
 import app.wrappers.axios.axios
+import app.wrappers.moment.moment
 import kotlinext.js.jsObject
 import kotlinx.html.ButtonType
 import kotlinx.html.js.onClickFunction
@@ -101,7 +102,32 @@ class TaskList: RComponent<RProps, TaskListState>() {
     }
 
     private fun RBuilder.renderFinishedTasks() {
-        renderTasks(getFinishedTasks(), "There are no tasks. Let's finish some!")
+        val finishedTasks = getFinishedTasks()
+
+        if (finishedTasks.isEmpty()) {
+            h5 { +"There are no finishedTasks. Let's finish some!" }
+        } else {
+            finishedTasks.groupBy { getDaysAgoGroupName(it) }
+                    .forEach { (group, tasks) ->
+                        h2 { +group }
+                        renderTasksIndexed(tasks)
+                    }
+        }
+
+    }
+
+    private fun getDaysAgoGroupName(task: TaskBean): String {
+        val trimmedDate = moment(task.completedDate).startOf("day")
+
+        val daysAgo = trimmedDate
+                .fromNow()
+                .toString()
+
+        return when {
+            "hours" in daysAgo -> "Today"
+            daysAgo == "2 days ago" -> "Yesterday"
+            else -> trimmedDate.format("dddd Do")
+        }
     }
 
     private fun RBuilder.renderTasks(tasks: List<TaskBean>, messageOnEmpty: String) {
