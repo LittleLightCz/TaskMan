@@ -58,7 +58,7 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
         }
     }
 
-    private fun handleTaskNameKeyPress(event: Event) {
+    private fun handleEnterKeyPress(event: Event) {
         val keyboardEvent = event.unsafeCast<KeyboardEvent>()
         if (keyboardEvent.key == "Enter") {
             handleSubmitTaskClicked()
@@ -80,6 +80,34 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
         setState { task.detail = target.value }
     }
 
+    private fun RBuilder.renderSubmitButton() {
+        button(classes = "btn btn-success mr-1") {
+            attrs {
+                onClickFunction = { handleSubmitTaskClicked() }
+                disabled = isSubmitNewTaskDisabled()
+            }
+
+            if (state.submitInProgress) {
+                i("fa fa-spinner fa-spin") { }
+                +" Submitting ..."
+            } else {
+                +"Submit"
+            }
+        }
+    }
+
+    private fun RBuilder.renderTaskNameInput() {
+        input(type = InputType.text, classes = "form-control") {
+            attrs {
+                placeholder = "Task name"
+                value = state.task.name
+                autoFocus = true
+                onChangeFunction = ::handleTaskNameChanged
+                onKeyPressFunction = ::handleEnterKeyPress
+            }
+        }
+    }
+
     override fun RBuilder.render() {
         val task = state.task
 
@@ -87,15 +115,7 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
             div("form-group") {
                 div("form-row") {
                     div("col") {
-                        input(type = InputType.text, classes = "form-control") {
-                            attrs {
-                                placeholder = "Task name"
-                                value = task.name
-                                autoFocus = true
-                                onChangeFunction = ::handleTaskNameChanged
-                                onKeyPressFunction = ::handleTaskNameKeyPress
-                            }
-                        }
+                        renderTaskNameInput()
                     }
 
                     div("col-md-3") {
@@ -103,6 +123,7 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
                             attrs {
                                 set("value", task.priority.toString())
                                 onChangeFunction = ::handlePriorityChanged
+                                onKeyPressFunction = ::handleEnterKeyPress
                             }
 
                             options(prioritiesMap)
@@ -131,21 +152,7 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
         }
     }
 
-    private fun RBuilder.renderSubmitButton() {
-        button(classes = "btn btn-success mr-1") {
-            attrs {
-                onClickFunction = { handleSubmitTaskClicked() }
-                disabled = isSubmitNewTaskDisabled()
-            }
 
-            if (state.submitInProgress) {
-                i("fa fa-spinner fa-spin") { }
-                +" Submitting ..."
-            } else {
-                +"Submit"
-            }
-        }
-    }
 }
 
 private fun RBuilder.options(optionsMap: Map<String, Int>) {

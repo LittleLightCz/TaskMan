@@ -8,6 +8,7 @@
     "font-awesome": "^4.7.0",
     "moment": "^2.20.1",
     "react": "^16.2.0",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.2.0"
   },
   "devDependencies": {
