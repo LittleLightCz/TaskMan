@@ -109,7 +109,7 @@ class TaskList: RComponent<RProps, TaskListState>() {
         } else {
             finishedTasks.groupBy { getDaysAgoGroupName(it) }
                     .forEach { (group, tasks) ->
-                        h2 { +group }
+                        h2("mt-2") { +group }
                         renderTasksIndexed(tasks)
                     }
         }
@@ -141,9 +141,9 @@ class TaskList: RComponent<RProps, TaskListState>() {
     private fun RBuilder.renderTasksIndexed(tasks: List<TaskBean>) {
         tasks.forEachIndexed { index, taskBean ->
             task(
-                    taskBean,
-                    index + 1,
-                    onChanged = { fetchTasks() }
+                taskBean,
+                index + 1,
+                onChanged = { fetchTasks() }
             )
         }
     }

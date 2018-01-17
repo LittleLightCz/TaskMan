@@ -9,7 +9,7 @@ import java.net.InetAddress
 import java.util.*
 
 
-class MainController() {
+class MainController {
 
     private val session = obtainHibernateSession()
     private val mapper = ObjectMapper()

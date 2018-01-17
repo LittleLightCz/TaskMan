@@ -10,8 +10,6 @@ import java.net.URI
 
 object TaskManMain {
 
-
-
     @JvmStatic
     fun main(args: Array<String>) {
         val serverPort = 7900
@@ -31,8 +29,6 @@ object TaskManMain {
             Desktop.getDesktop().browse(URI("http://localhost:$port"))
         }
     }
-
-
 
 }
 

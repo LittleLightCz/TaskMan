@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import java.util.concurrent.TimeUnit
 
 
-class ScheduledMaintanenceTask() {
+class ScheduledMaintanenceTask {
 
     private val session = obtainHibernateSession()
 
