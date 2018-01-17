@@ -8,8 +8,10 @@ import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onContextMenuFunction
 import kotlinx.html.title
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.MouseEvent
 import react.*
 import react.dom.*
 import kotlin.js.Promise
@@ -51,6 +53,11 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         action().then {
             setState { updatingTask = false }
         }
+    }
+
+    private fun handleRightMouseClick(event: Event) {
+        event.preventDefault()
+        setState { showEditor = true }
     }
 
     private fun handleTaskDoneClick(event: Event) {
@@ -242,6 +249,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                     div("d-flex flex-row text-left") {
                         h4("clickable m-0") {
                             attrs.onClickFunction = { setState { showDetails = !showDetails } }
+                            attrs.onContextMenuFunction = ::handleRightMouseClick
 
                             if (!suspended && !isCompleted()) {
                                 strong { +"${props.order}. " }
@@ -263,6 +271,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
             }
         }
     }
+
 }
 
 fun RBuilder.task(task: TaskBean, order: Int, onChanged: () -> Unit) = child(Task::class) {
