@@ -108,10 +108,12 @@ class TaskList: RComponent<RProps, TaskListState>() {
             h5 { +"There are no finishedTasks. Let's finish some!" }
         } else {
             finishedTasks.groupBy { getDaysAgoGroupName(it) }
-                    .forEach { (group, tasks) ->
-                        h2("mt-2") { +group }
-                        renderTasksIndexed(tasks)
-                    }
+                .toList()
+                .sortedByDescending { (_, tasks) -> tasks.firstOrNull()?.completedDate }
+                .forEach { (group, tasks) ->
+                    h2("mt-2") { +group }
+                    renderTasksIndexed(tasks)
+                }
         }
 
     }
