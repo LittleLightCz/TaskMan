@@ -119,16 +119,18 @@ class TaskList: RComponent<RProps, TaskListState>() {
     }
 
     private fun getDaysAgoGroupName(task: TaskBean): String {
-        val trimmedDate = moment(task.completedDate).startOf("day")
+        val now = moment().startOf("day")
+        val completedDate = moment(task.completedDate).startOf("day")
 
-        val daysAgo = trimmedDate
-                .fromNow()
+        val daysAgo = completedDate
+                .diff(now, "days")
                 .toString()
+                .toInt()
 
-        return when {
-            "hours" in daysAgo -> "Today"
-            daysAgo == "2 days ago" -> "Yesterday"
-            else -> trimmedDate.format("dddd Do").toString()
+        return when(daysAgo) {
+            0 -> "Today"
+            1 -> "Yesterday"
+            else -> completedDate.format("dddd Do").toString()
         }
     }
 
