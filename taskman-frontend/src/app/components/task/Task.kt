@@ -158,6 +158,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
             }
             task.suspended -> {
                 renderUnsuspendButton()
+                renderDeleteButton()
             }
             else -> {
                 renderDeescalateButton()
