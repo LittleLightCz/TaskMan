@@ -2,6 +2,7 @@ package com.svetylkovo.taskman.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.svetylkovo.taskman.entity.Task
+import com.svetylkovo.taskman.session.transaction
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
 import spark.Spark.get
 import spark.Spark.post
@@ -29,9 +30,9 @@ class MainController {
                 createdDate = Date()
             }
 
-            session.beginTransaction()
-            session.persist(task)
-            session.transaction.commit()
+            session.transaction {
+                persist(task)
+            }
             "OK"
         }
 
@@ -46,11 +47,11 @@ class MainController {
         }
 
         post("/api/task/delete/:id") { req, _ ->
-            session.beginTransaction()
-            val id = req.params(":id")
-            val task = session.get(Task::class.java, id.toLong()) as Task
-            session.delete(task)
-            session.transaction.commit()
+            session.transaction {
+                val id = req.params(":id")
+                val task = get(Task::class.java, id.toLong()) as Task
+                delete(task)
+            }
             "OK"
         }
 
@@ -90,12 +91,10 @@ class MainController {
     }
 
     private fun updateTask(id: Long, action: (Task) -> Unit) {
-        with(session) {
-            beginTransaction()
+        session.transaction {
             val task = get(Task::class.java, id) as Task
             action(task)
             update(task)
-            transaction.commit()
         }
     }
 }

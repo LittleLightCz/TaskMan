@@ -2,6 +2,7 @@ package com.svetylkovo.taskman.scheduled
 
 import com.svetylkovo.taskman.entity.Task
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
+import com.svetylkovo.taskman.session.transaction
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.joda.time.DateTime
@@ -16,10 +17,8 @@ class ScheduledMaintanenceTask {
         Observable.interval(0, 4, TimeUnit.HOURS, Schedulers.io())
                 .subscribe {
                     try {
-                        with(session) {
+                        session.transaction {
                             println("Deleting tasks older than 8 days")
-
-                            beginTransaction()
 
                             val eightDaysAgo = DateTime().plusDays(-8)
 
@@ -33,7 +32,6 @@ class ScheduledMaintanenceTask {
                                     }
 
                             tasksToDelete.forEach { delete(it) }
-                            transaction.commit()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
