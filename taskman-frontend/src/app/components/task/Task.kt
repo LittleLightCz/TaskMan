@@ -131,7 +131,9 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                     i { +"No details were specified." }
                 } else {
                     h5 { +"Details:" }
-                    div { +"${props.task.detail}" }
+                    div("task-details") {
+                        +"${props.task.detail}"
+                    }
                 }
             }
             div("text-right") {
