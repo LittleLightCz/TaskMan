@@ -12,7 +12,6 @@ import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onContextMenuFunction
 import kotlinx.html.title
 import org.w3c.dom.events.Event
-import org.w3c.dom.events.MouseEvent
 import react.*
 import react.dom.*
 import kotlin.js.Promise
