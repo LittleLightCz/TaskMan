@@ -2,14 +2,12 @@ package com.svetylkovo.taskman.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.svetylkovo.taskman.entity.Task
-import com.svetylkovo.taskman.session.transaction
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
+import com.svetylkovo.taskman.session.transaction
 import org.apache.commons.lang3.exception.ExceptionUtils
 import spark.Spark.*
 import java.net.InetAddress
 import java.util.*
-import spark.Spark.exception
-import kotlin.reflect.jvm.internal.impl.utils.ExceptionUtilsKt
 
 
 class MainController {
