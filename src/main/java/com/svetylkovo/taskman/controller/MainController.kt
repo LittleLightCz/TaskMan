@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.svetylkovo.taskman.entity.Task
 import com.svetylkovo.taskman.session.transaction
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
-import spark.Spark.get
-import spark.Spark.post
+import org.apache.commons.lang3.exception.ExceptionUtils
+import spark.Spark.*
 import java.net.InetAddress
 import java.util.*
+import spark.Spark.exception
+import kotlin.reflect.jvm.internal.impl.utils.ExceptionUtilsKt
 
 
 class MainController {
@@ -16,6 +18,16 @@ class MainController {
     private val mapper = ObjectMapper()
 
     init {
+        exception(Exception::class.java, { exception, _, response ->
+            exception.printStackTrace()
+
+            with(response) {
+                status(500)
+                type("application/json")
+                body(mapper.writeValueAsString(ExceptionUtils.getStackTrace(exception)))
+            }
+        })
+
         get("/api/hostname") { _, _ ->
             InetAddress.getLocalHost().hostName
         }

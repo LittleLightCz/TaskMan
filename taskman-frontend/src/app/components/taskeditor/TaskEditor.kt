@@ -1,6 +1,7 @@
 package app.components.taskeditor
 
 import app.bean.TaskBean
+import app.components.error.error
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
 import kotlinx.html.InputType
@@ -21,6 +22,7 @@ interface TaskEditorProps : RProps {
 }
 
 interface TaskEditorState : RState {
+    var error: String?
     var task: TaskBean
     var submitInProgress: Boolean
 }
@@ -54,7 +56,11 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
                 url = reqUrl
                 method = "post"
                 data = state.task
-            }).then { props.onClose() }
+            })
+            .then { props.onClose() }
+            .catch { e: dynamic ->
+                setState { error = e.response.data }
+            }
         }
     }
 
@@ -112,6 +118,8 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
         val task = state.task
 
         div {
+            error(state.error)
+
             div("form-group") {
                 div("form-row") {
                     div("col") {
@@ -151,7 +159,6 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
             }
         }
     }
-
 
 }
 

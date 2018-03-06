@@ -2,6 +2,7 @@ package app.components.task
 
 import app.bean.TaskBean
 import app.bean.isCompleted
+import app.components.error.error
 import app.components.taskeditor.prioritiesMap
 import app.components.taskeditor.taskEditor
 import app.wrappers.axios.axios
@@ -17,6 +18,7 @@ import react.dom.*
 import kotlin.js.Promise
 
 interface TaskState : RState {
+    var error: String?
     var showDetails: Boolean
     var showEditor: Boolean
     var updatingTask: Boolean
@@ -52,6 +54,9 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         setState { updatingTask = true }
         action().then {
             setState { updatingTask = false }
+        }
+        .catch { e: dynamic ->
+            setState { error = e.response.data }
         }
     }
 
@@ -248,6 +253,8 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                 }
             }
             else -> with(props.task) {
+                error(state.error)
+
                 div("alert alert-${getAlertClassType()} m-0 d-flex flex-column") {
                     div("d-flex flex-row text-left") {
                         h4("clickable m-0") {
