@@ -1,5 +1,6 @@
 package app
 
+import app.components.headermenu.headerMenu
 import app.components.hostname
 import app.components.tasklist.taskList
 import react.RBuilder
@@ -18,6 +19,8 @@ class App : RComponent<RProps, RState>() {
                 +"TaskMan"
                 hostname()
             }
+
+            headerMenu()
         }
 
         taskList()

@@ -3,18 +3,16 @@ body {
 }
 
 .App-header {
+  display: flex;
+  align-items: center;
   background-color: #000;
   height: 75px;
   padding: 20px;
   color: white;
 }
 
-.App-intro {
-  font-size: large;
-}
-
-.App-ticker {
-  font-size: medium;
+.App-header h1 {
+  flex-grow: 1;
 }
 
 .clickable {
