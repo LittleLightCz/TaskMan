@@ -10,7 +10,7 @@ class Task {
     var id: Long = 0
     var name: String = ""
 
-    @Column(length = 4000)
+    @Lob
     var detail: String? = null
 
     var priority: Int = 0

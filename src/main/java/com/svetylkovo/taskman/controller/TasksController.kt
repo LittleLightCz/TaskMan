@@ -1,5 +1,6 @@
 package com.svetylkovo.taskman.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.svetylkovo.taskman.entity.Task
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
@@ -10,7 +11,7 @@ import java.net.InetAddress
 import java.util.*
 
 
-class MainController {
+class TasksController {
 
     private val session = obtainHibernateSession()
     private val mapper = ObjectMapper()
@@ -53,6 +54,35 @@ class MainController {
                 it.detail = task.detail
                 it.priority = task.priority
             }
+            "OK"
+        }
+
+        get("/api/tasks/export") { req, response ->
+            val tasks = session.createCriteria(Task::class.java)
+                .list()
+                .filterIsInstance<Task>()
+                .filter { it.completedDate == null }
+
+            response.raw().apply {
+                contentType = "application/octet-stream"
+                setHeader("Content-Disposition", "attachment; filename=Tasks.json")
+
+                outputStream.writer().use {
+                    it.write(mapper.writeValueAsString(tasks))
+                }
+            }
+        }
+
+        post("/api/tasks/import") { req, _ ->
+            val tasks: List<Task> = mapper.readValue(req.body(), object : TypeReference<List<Task>>() {})
+
+            session.transaction {
+                tasks.forEach {
+                    it.id = 0
+                    persist(it)
+                }
+            }
+
             "OK"
         }
 

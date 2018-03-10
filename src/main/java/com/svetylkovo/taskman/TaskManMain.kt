@@ -1,6 +1,6 @@
 package com.svetylkovo.taskman
 
-import com.svetylkovo.taskman.controller.MainController
+import com.svetylkovo.taskman.controller.TasksController
 import com.svetylkovo.taskman.scheduled.ScheduledMaintanenceTask
 import spark.Spark.port
 import spark.Spark.staticFiles
@@ -17,7 +17,7 @@ object TaskManMain {
 
         port(serverPort)
 
-        MainController()
+        TasksController()
 
         ScheduledMaintanenceTask()
 
