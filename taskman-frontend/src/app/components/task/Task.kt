@@ -176,6 +176,9 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                 renderEscalateButton()
                 renderSuspendButton()
                 renderFinishTaskButton()
+                if (task.getPoosCount() > 0) {
+                    renderDeleteButton()
+                }
             }
         }
     }
