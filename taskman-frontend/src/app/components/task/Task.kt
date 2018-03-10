@@ -1,8 +1,10 @@
 package app.components.task
 
 import app.bean.TaskBean
+import app.bean.getPoosCount
 import app.bean.isCompleted
 import app.components.error.error
+import app.components.poos.poos
 import app.components.taskeditor.prioritiesMap
 import app.components.taskeditor.taskEditor
 import app.wrappers.axios.axios
@@ -15,6 +17,9 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
 import kotlin.js.Promise
+
+@JsModule("src/images/poo.svg")
+external val pooImage: dynamic
 
 interface TaskState : RState {
     var error: String?
@@ -276,12 +281,15 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
                     }
 
                     renderTaskDetails()
+
+                    poos(props.task.getPoosCount())
                 }
             }
         }
     }
 
 }
+
 
 fun RBuilder.task(task: TaskBean, order: Int, onChanged: () -> Unit) = child(Task::class) {
     attrs.task = task

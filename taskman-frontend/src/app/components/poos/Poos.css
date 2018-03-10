@@ -1,0 +1,11 @@
+.poos {
+    display: flex;
+    justify-content: flex-end;
+    height: 25px;
+    margin-top: 5px;
+}
+
+.poos img {
+    height: 25px;
+    margin-left: 2px;
+}
