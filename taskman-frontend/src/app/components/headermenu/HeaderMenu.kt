@@ -2,6 +2,7 @@ package app.components.headermenu
 
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
+import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
@@ -11,20 +12,27 @@ import org.w3c.dom.events.Event
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RBuilder
-import react.dom.a
-import react.dom.div
-import react.dom.input
+import react.dom.*
 import kotlin.browser.document
 import kotlin.browser.window
 
 fun RBuilder.headerMenu() {
     div("header-menu") {
-        a("#") {
-            attrs.onClickFunction = ::handleImportClick
-            +"Import"
+        div("dropdown dropleft") {
+            button(type = ButtonType.button, classes = "btn btn-outline-light" ) {
+                attrs["data-toggle"] = "dropdown"
+                i("fa fa-bars fa-lg") {}
+            }
+            div("dropdown-menu") {
+                a(href = "#", classes = "dropdown-item") {
+                    attrs.onClickFunction = ::handleImportClick
+                    +"Import"
+                }
+                a(href = "/api/tasks/export", classes = "dropdown-item") {
+                    +"Export"
+                }
+            }
         }
-        +" / "
-        a("/api/tasks/export") { +"Export" }
 
         input(type = InputType.file) {
             attrs.id = "importFile"
