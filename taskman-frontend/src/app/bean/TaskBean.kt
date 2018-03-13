@@ -18,6 +18,6 @@ fun TaskBean.isNotCompleted() = completedDate == null
 
 fun TaskBean.getPoosCount(): Int {
     val now = moment()
-    val daysAgo = moment(createdDate).diff(now, "days")
+    val daysAgo = now.diff(createdDate, "days")
     return floor(daysAgo / 7).toInt()
 }

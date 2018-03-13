@@ -58,6 +58,6 @@ private fun importSelectedFile(e: Event) {
             true
         }
 
-        reader.readAsBinaryString(file)
+        reader.readAsText(file)
     }
 }

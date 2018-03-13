@@ -3,6 +3,7 @@ package app.components.task
 import app.bean.TaskBean
 import app.bean.getPoosCount
 import app.bean.isCompleted
+import app.bean.isNotCompleted
 import app.components.error.error
 import app.components.poos.poos
 import app.components.taskeditor.prioritiesMap
@@ -251,6 +252,14 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         }
     }
 
+    private fun RBuilder.renderPoos() {
+        with(props.task) {
+            if (isNotCompleted() && !suspended) {
+                poos(getPoosCount())
+            }
+        }
+    }
+
     override fun RBuilder.render() {
         when {
             state.showEditor -> div("mt-2 mb-2") {
@@ -285,7 +294,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
 
                     renderTaskDetails()
 
-                    poos(props.task.getPoosCount())
+                    renderPoos()
                 }
             }
         }
