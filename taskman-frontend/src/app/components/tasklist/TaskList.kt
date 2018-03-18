@@ -5,8 +5,8 @@ import app.bean.isCompleted
 import app.bean.isNotCompleted
 import app.components.task.task
 import app.components.taskeditor.taskEditor
-import app.components.tasklist.View.ACTIVE_TASKS
-import app.components.tasklist.View.FINISHED_TASKS
+import app.components.tasklist.View.*
+import app.views.FellowsView.fellowsView
 import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
@@ -22,7 +22,7 @@ import kotlin.js.Promise
 external val catImage: dynamic
 
 enum class View {
-    ACTIVE_TASKS, FINISHED_TASKS
+    ACTIVE_TASKS, FINISHED_TASKS, FELLOWS
 }
 
 interface TaskListState: RState {
@@ -77,22 +77,24 @@ class TaskList: RComponent<RProps, TaskListState>() {
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
     private fun RBuilder.renderNavigationBar() {
-        fun activeIf(view: View) = if (state.view == view) "active" else ""
+
 
         div("pt-5 pb-1") {
             ul("nav nav-tabs") {
-                li("nav-item") {
-                    a(classes = "nav-link ${activeIf(ACTIVE_TASKS)}", href = "#") {
-                        attrs.onClickFunction = { setState { view = ACTIVE_TASKS }}
-                        +"Task List"
-                    }
-                }
-                li("nav-item") {
-                    a(classes = "nav-link ${activeIf(FINISHED_TASKS)}", href = "#") {
-                        attrs.onClickFunction = { setState { view = FINISHED_TASKS }}
-                        +"Finished Tasks"
-                    }
-                }
+                navigationBarItem("Task List", ACTIVE_TASKS)
+                navigationBarItem("Finished Tasks", FINISHED_TASKS)
+                navigationBarItem("Fellows", FELLOWS)
+            }
+        }
+    }
+
+    private fun RBuilder.navigationBarItem(itemName: String, view: View) {
+        fun activeIf(view: View) = if (state.view == view) "active" else ""
+
+        li("nav-item") {
+            a(classes = "nav-link ${activeIf(view)}", href = "#") {
+                attrs.onClickFunction = { setState { this.view = view } }
+                +itemName
             }
         }
     }
@@ -202,6 +204,8 @@ class TaskList: RComponent<RProps, TaskListState>() {
                 }
             }
         }
+
+        if (state.view == FELLOWS) fellowsView()
     }
 
 }
