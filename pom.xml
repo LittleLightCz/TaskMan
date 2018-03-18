@@ -10,7 +10,23 @@
 
     <properties>
         <kotlin.version>1.2.30</kotlin.version>
+        <ktor.version>0.9.1</ktor.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>ktor</id>
+            <url>http://dl.bintray.com/kotlin/ktor</url>
+        </repository>
+        <repository>
+            <id>kotlinx</id>
+            <url>http://dl.bintray.com/kotlin/kotlinx</url>
+        </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -72,6 +88,23 @@
             <version>3.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-core</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-jetty</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -149,6 +182,7 @@
                 </executions>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
+                    <experimentalCoroutines>enable</experimentalCoroutines>
                 </configuration>
             </plugin>
 
@@ -157,7 +191,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.svetylkovo.taskman.TaskManMain</mainClass>
+                            <mainClass>com.svetylkovo.taskman.TaskMan</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
