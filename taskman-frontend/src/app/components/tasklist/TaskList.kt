@@ -122,8 +122,8 @@ class TaskList: RComponent<RProps, TaskListState>() {
         val now = moment().startOf("day")
         val completedDate = moment(task.completedDate).startOf("day")
 
-        val daysAgo = completedDate
-                .diff(now, "days")
+        val daysAgo = now
+                .diff(completedDate, "days")
                 .toString()
                 .toInt()
 

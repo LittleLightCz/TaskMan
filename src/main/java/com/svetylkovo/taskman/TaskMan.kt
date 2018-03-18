@@ -1,7 +1,8 @@
 package com.svetylkovo.taskman
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.svetylkovo.taskman.controller.TasksController.Companion.tasksController
+import com.svetylkovo.taskman.controller.TasksController.tasksController
+import com.svetylkovo.taskman.scheduled.ScheduledMaintanenceTask
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.content.defaultResource
@@ -24,16 +25,14 @@ import java.net.URI
 
 object TaskMan {
 
-    val log = Logger.getLogger(TaskMan::class.java)
+    val log: Logger = Logger.getLogger(TaskMan::class.java)
 
     @JvmStatic
     fun main(args: Array<String>) {
         val serverPort = 7900
         staticFiles.location("/build")
 
-//        TasksController()
-//
-//        ScheduledMaintanenceTask()
+        ScheduledMaintanenceTask()
 
         val server = embeddedServer(Jetty, serverPort) {
             install(ContentNegotiation) {
