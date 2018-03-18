@@ -18,7 +18,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.jetty.Jetty
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jboss.logging.Logger
-import spark.Spark.staticFiles
 import java.awt.Desktop
 import java.net.URI
 
@@ -30,7 +29,6 @@ object TaskMan {
     @JvmStatic
     fun main(args: Array<String>) {
         val serverPort = 7900
-        staticFiles.location("/build")
 
         ScheduledMaintanenceTask()
 
