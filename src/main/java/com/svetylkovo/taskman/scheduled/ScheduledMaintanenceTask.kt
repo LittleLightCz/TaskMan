@@ -9,7 +9,7 @@ import org.joda.time.DateTime
 import java.util.concurrent.TimeUnit
 
 
-class ScheduledMaintanenceTask {
+class ScheduledMaintanenceTask(val finishedTasksDaysLifespan: Int) {
 
     private val session = obtainHibernateSession()
 
@@ -18,16 +18,16 @@ class ScheduledMaintanenceTask {
                 .subscribe {
                     try {
                         session.transaction {
-                            println("Deleting tasks older than 8 days")
+                            println("Deleting tasks older than $finishedTasksDaysLifespan days")
 
-                            val eightDaysAgo = DateTime().plusDays(-8)
+                            val deleteThresholdDay = DateTime().plusDays(-finishedTasksDaysLifespan)
 
                             val tasksToDelete = session.createCriteria(Task::class.java).list()
                                     .filterIsInstance<Task>()
                                     .filter {
                                         val completedDate = it.completedDate
 
-                                        if (completedDate != null) eightDaysAgo.isAfter(completedDate.time)
+                                        if (completedDate != null) deleteThresholdDay.isAfter(completedDate.time)
                                         else false
                                     }
 

@@ -1,5 +1,6 @@
 package com.svetylkovo.taskman
 
+import com.svetylkovo.taskman.config.Config.taskmanConfiguration
 import com.svetylkovo.taskman.controller.TasksController
 import com.svetylkovo.taskman.scheduled.ScheduledMaintanenceTask
 import spark.Spark.port
@@ -19,7 +20,7 @@ object TaskManMain {
 
         TasksController()
 
-        ScheduledMaintanenceTask()
+        ScheduledMaintanenceTask(taskmanConfiguration.finishedTasksDaysLifespan)
 
         launchDefaultBrowser(serverPort)
     }
