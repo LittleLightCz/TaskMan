@@ -1,6 +1,7 @@
 package com.svetylkovo.taskman
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.svetylkovo.taskman.config.Config.taskmanConfiguration
 import com.svetylkovo.taskman.controller.FellowsController.fellowsController
 import com.svetylkovo.taskman.controller.TasksController.tasksController
 import com.svetylkovo.taskman.scheduled.ScheduledMaintanenceTask
@@ -31,7 +32,7 @@ object TaskMan {
     fun main(args: Array<String>) {
         val serverPort = 7900
 
-        ScheduledMaintanenceTask()
+        ScheduledMaintanenceTask(taskmanConfiguration.finishedTasksDaysLifespan)
 
         val server = embeddedServer(Jetty, serverPort) {
             install(ContentNegotiation) {
@@ -42,7 +43,7 @@ object TaskMan {
 
             install(StatusPages) {
                 exception<Throwable> { cause ->
-                    log.error("Error occured!", cause)
+                    log.error("Error occurred!", cause)
                     call.respond(HttpStatusCode.InternalServerError, ExceptionUtils.getStackTrace(cause))
                 }
             }
