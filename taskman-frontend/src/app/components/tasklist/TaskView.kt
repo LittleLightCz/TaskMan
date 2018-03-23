@@ -31,7 +31,11 @@ interface TaskViewState: RState {
     var view: View
 }
 
-class TaskView: RComponent<RProps, TaskViewState>() {
+interface TaskViewProps: RProps {
+    var history: dynamic
+}
+
+class TaskView: RComponent<TaskViewProps, TaskViewState>() {
 
     private var tasksRefreshIntervalID = 0
 
@@ -182,6 +186,7 @@ class TaskView: RComponent<RProps, TaskViewState>() {
 
     private fun RBuilder.renderShowFellowsButton() {
         button(type = ButtonType.button, classes = "btn btn-primary") {
+            attrs.onClickFunction = { props.history.push("/fellows") }
             i("fa fa-child") {}
             +" Fellows"
         }
@@ -220,6 +225,4 @@ class TaskView: RComponent<RProps, TaskViewState>() {
 
 }
 
-
-
-fun RBuilder.tasksView() = child(TaskView::class) {}
+fun RBuilder.tasksView(handler: RHandler<TaskViewProps>) = child(TaskView::class, handler)

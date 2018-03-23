@@ -4,6 +4,7 @@ import app.components.headermenu.headerMenu
 import app.components.hostname
 import app.components.tasklist.tasksView
 import app.views.FellowsView.fellowsView
+import app.wrappers.routing.RouteResultProps
 import app.wrappers.routing.browserRouter
 import app.wrappers.routing.route
 import app.wrappers.routing.switch
@@ -29,7 +30,11 @@ class App : RComponent<RProps, RState>() {
 
         browserRouter {
             switch {
-                route("/", exact = true) { tasksView() }
+                route("/", exact = true) { routeResult: RouteResultProps<dynamic> ->
+                    tasksView {
+                        attrs.history = routeResult.asDynamic().history
+                    }
+                }
                 route("/fellows") { fellowsView() }
             }
         }
