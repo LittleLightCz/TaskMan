@@ -5,8 +5,12 @@
     margin-right: auto;
 }
 
-.tasklist-title {
-    padding-top: 50px;
+.tasklist-top-buttons {
+    display: flex;
+}
+
+.tasklist-top-buttons button.add-new-task {
+    margin-left: auto
 }
 
 h3.tasks-loading {

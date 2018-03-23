@@ -5,8 +5,8 @@ import app.bean.isCompleted
 import app.bean.isNotCompleted
 import app.components.task.task
 import app.components.taskeditor.taskEditor
-import app.components.tasklist.View.*
-import app.views.FellowsView.fellowsView
+import app.components.tasklist.View.ACTIVE_TASKS
+import app.components.tasklist.View.FINISHED_TASKS
 import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
@@ -22,7 +22,7 @@ import kotlin.js.Promise
 external val catImage: dynamic
 
 enum class View {
-    ACTIVE_TASKS, FINISHED_TASKS, FELLOWS
+    ACTIVE_TASKS, FINISHED_TASKS
 }
 
 interface TaskViewState: RState {
@@ -77,13 +77,10 @@ class TaskView: RComponent<RProps, TaskViewState>() {
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
     private fun RBuilder.renderNavigationBar() {
-
-
         div("pt-5 pb-1") {
             ul("nav nav-tabs") {
                 navigationBarItem("Task List", ACTIVE_TASKS)
                 navigationBarItem("Finished Tasks", FINISHED_TASKS)
-                navigationBarItem("Fellows", FELLOWS)
             }
         }
     }
@@ -168,7 +165,7 @@ class TaskView: RComponent<RProps, TaskViewState>() {
         }
     }
 
-    private fun RBuilder.renderAddTask() {
+    private fun RBuilder.renderTopButtons() {
         if (state.showAddTask) {
             h3 { +"Give that boy a task!" }
             taskEditor {
@@ -176,11 +173,25 @@ class TaskView: RComponent<RProps, TaskViewState>() {
                 fetchTasks()
             }
         } else {
-            button(type = ButtonType.button, classes = "btn btn-success pull-right") {
-                attrs.onClickFunction = ::handleAddNewTaskClick
-                i("fa fa-plus") {}
-                +" Add new task!"
+            div("tasklist-top-buttons") {
+                renderShowFellowsButton()
+                renderAddTaskButton()
             }
+        }
+    }
+
+    private fun RBuilder.renderShowFellowsButton() {
+        button(type = ButtonType.button, classes = "btn btn-primary") {
+            i("fa fa-child") {}
+            +" Fellows"
+        }
+    }
+
+    private fun RBuilder.renderAddTaskButton() {
+        button(type = ButtonType.button, classes = "btn btn-success add-new-task") {
+            attrs.onClickFunction = ::handleAddNewTaskClick
+            i("fa fa-plus") {}
+            +" Add new task!"
         }
     }
 
@@ -192,7 +203,8 @@ class TaskView: RComponent<RProps, TaskViewState>() {
                     i("fa fa-spinner fa-spin") { }
                 }
             } else {
-                renderAddTask()
+                renderTopButtons()
+
                 renderNavigationBar()
 
                 when (state.view) {
@@ -204,10 +216,10 @@ class TaskView: RComponent<RProps, TaskViewState>() {
                 }
             }
         }
-
-        if (state.view == FELLOWS) fellowsView()
     }
 
 }
+
+
 
 fun RBuilder.tasksView() = child(TaskView::class) {}
