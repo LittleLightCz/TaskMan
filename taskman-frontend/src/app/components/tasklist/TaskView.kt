@@ -25,17 +25,17 @@ enum class View {
     ACTIVE_TASKS, FINISHED_TASKS, FELLOWS
 }
 
-interface TaskListState: RState {
+interface TaskViewState: RState {
     var tasks: Array<TaskBean>?
     var showAddTask: Boolean
     var view: View
 }
 
-class TaskList: RComponent<RProps, TaskListState>() {
+class TaskView: RComponent<RProps, TaskViewState>() {
 
     private var tasksRefreshIntervalID = 0
 
-    override fun TaskListState.init() {
+    override fun TaskViewState.init() {
         tasks = null
         showAddTask = false
         view = ACTIVE_TASKS
@@ -210,4 +210,4 @@ class TaskList: RComponent<RProps, TaskListState>() {
 
 }
 
-fun RBuilder.taskList() = child(TaskList::class) {}
+fun RBuilder.tasksView() = child(TaskView::class) {}

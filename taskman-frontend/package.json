@@ -11,7 +11,8 @@
     "popper.js": "^1.14.0",
     "react": "^16.2.0",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
     "react-scripts-kotlin": "2.1.5"

@@ -2,7 +2,11 @@ package app
 
 import app.components.headermenu.headerMenu
 import app.components.hostname
-import app.components.tasklist.taskList
+import app.components.tasklist.tasksView
+import app.views.FellowsView.fellowsView
+import app.wrappers.routing.browserRouter
+import app.wrappers.routing.route
+import app.wrappers.routing.switch
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -23,7 +27,12 @@ class App : RComponent<RProps, RState>() {
             headerMenu()
         }
 
-        taskList()
+        browserRouter {
+            switch {
+                route("/", exact = true) { tasksView() }
+                route("/fellows") { fellowsView() }
+            }
+        }
     }
 }
 
