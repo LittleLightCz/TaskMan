@@ -26,10 +26,8 @@ class Hostname : RComponent<RProps, HostnameState>() {
         axios<String>(jsObject {
             url = "api/hostname"
         }).then {
-            setState {
-                hostname = it.data
-            }
-        }.catch { err ->
+            setState { hostname = it.data }
+        }.catch {
             setState { hostname = "?unknown?" }
         }
     }

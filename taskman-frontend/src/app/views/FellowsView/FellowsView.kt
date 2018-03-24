@@ -74,9 +74,7 @@ class FellowsView : RComponent<RProps, FellowsViewState>() {
 
     override fun RBuilder.render() {
         div("fellows m-1") {
-
             renderAddFellowBar()
-
 
             +"${state.fellows.size} fellas ..."
         }

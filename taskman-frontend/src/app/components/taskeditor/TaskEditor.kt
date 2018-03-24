@@ -3,6 +3,7 @@ package app.components.taskeditor
 import app.bean.TaskBean
 import app.components.bootstrap.spinner
 import app.components.error.error
+import app.extensions.axiosCatch
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
 import kotlinx.html.InputType
@@ -59,8 +60,8 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
                 data = state.task
             })
             .then { props.onClose() }
-            .catch { e: dynamic ->
-                setState { error = e.response.data }
+            .axiosCatch {
+                setState { error = it }
             }
         }
     }
