@@ -4,10 +4,19 @@ import react.RBuilder
 import react.dom.div
 
 
-fun RBuilder.error(errorMessage: String?) {
-    errorMessage?.let {
+fun RBuilder.error(error: Any?) {
+    error?.let {
         div("alert alert-danger error-message") {
-            +it
+            +getErrorMessage(error)
         }
+    }
+}
+
+private fun getErrorMessage(error: Any) = when (error) {
+    is String -> error
+    else -> {
+        console.log("Received unknown error object (${jsTypeOf(error)}):")
+        console.log(error)
+        error.toString()
     }
 }

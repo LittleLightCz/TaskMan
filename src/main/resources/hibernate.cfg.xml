@@ -32,6 +32,7 @@
         <property name="hbm2ddl.auto">update</property>
 
         <mapping class="com.svetylkovo.taskman.entity.Task"/>
+        <mapping class="com.svetylkovo.taskman.entity.Fellow"/>
 
     </session-factory>
 

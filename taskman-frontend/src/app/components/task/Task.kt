@@ -9,7 +9,6 @@ import app.components.error.error
 import app.components.poos.poos
 import app.components.taskeditor.prioritiesMap
 import app.components.taskeditor.taskEditor
-import app.extensions.axiosCatch
 import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
@@ -25,7 +24,7 @@ import kotlin.js.Promise
 external val pooImage: dynamic
 
 interface TaskState : RState {
-    var error: String?
+    var error: Any?
     var showDetails: Boolean
     var showEditor: Boolean
     var updatingTask: Boolean
@@ -61,7 +60,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         setState { updatingTask = true }
         action().then {
             setState { updatingTask = false }
-        }.axiosCatch {
+        }.catch {
             setState { error = it }
         }
     }

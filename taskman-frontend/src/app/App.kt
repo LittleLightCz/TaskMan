@@ -41,7 +41,11 @@ class App : RComponent<RProps, RState>() {
                         attrs.history = routeResult.asDynamic().history
                     }
                 }
-                route("/fellows") { fellowsView() }
+                route("/fellows") { routeResult: RouteResultProps<dynamic> ->
+                    fellowsView {
+                        attrs.history = routeResult.asDynamic().history
+                    }
+                }
             }
         }
     }

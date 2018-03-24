@@ -1,7 +1,6 @@
 package app.bean
 
 
-class FellowBean {
-    var id = 0L
-    var url = ""
+class FellowBean(var url: String) {
+    var id = 0
 }
