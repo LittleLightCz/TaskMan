@@ -4,6 +4,7 @@ import app.bean.TaskBean
 import app.bean.getPoosCount
 import app.bean.isCompleted
 import app.bean.isNotCompleted
+import app.components.bootstrap.spinner
 import app.components.error.error
 import app.components.poos.poos
 import app.components.taskeditor.prioritiesMap
@@ -162,7 +163,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
         when {
             state.updatingTask -> strong {
                 +"Updating ... "
-                i("fa fa-spinner fa-spin") {}
+                spinner()
             }
             task.isCompleted() -> {
                 renderRestoreButton()

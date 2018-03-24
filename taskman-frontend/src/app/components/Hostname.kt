@@ -1,12 +1,12 @@
 package app.components
 
+import app.components.bootstrap.spinner
 import app.wrappers.axios.axios
 import app.wrappers.clipboard.copyToClipboard
 import app.wrappers.toastify.Toastify
 import kotlinext.js.jsObject
 import kotlinx.html.title
 import react.*
-import react.dom.i
 import react.dom.small
 import react.dom.span
 import kotlin.browser.window
@@ -50,7 +50,7 @@ class Hostname : RComponent<RProps, HostnameState>() {
             if (hostname == null) {
                 small {
                     +" "
-                    i("fa fa-spinner fa-spin") {}
+                    spinner()
                 }
             } else {
                 small { +" on " }

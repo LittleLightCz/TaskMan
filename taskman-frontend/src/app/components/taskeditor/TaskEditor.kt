@@ -1,6 +1,7 @@
 package app.components.taskeditor
 
 import app.bean.TaskBean
+import app.components.bootstrap.spinner
 import app.components.error.error
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
@@ -94,7 +95,7 @@ class TaskEditor(props: TaskEditorProps) : RComponent<TaskEditorProps, TaskEdito
             }
 
             if (state.submitInProgress) {
-                i("fa fa-spinner fa-spin") { }
+                spinner()
                 +" Submitting ..."
             } else {
                 +"Submit"

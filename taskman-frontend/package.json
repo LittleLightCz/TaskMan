@@ -15,6 +15,7 @@
     "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
+    "kotlin-compiler": "1.2.30",
     "react-scripts-kotlin": "2.1.5"
   },
   "scripts": {

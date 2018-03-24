@@ -1,0 +1,10 @@
+.fellows .add-fellow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 38px;
+}
+
+.add-fellow .input-group {
+    width: 500px;
+}

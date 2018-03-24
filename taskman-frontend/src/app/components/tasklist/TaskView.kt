@@ -3,6 +3,7 @@ package app.components.tasklist
 import app.bean.TaskBean
 import app.bean.isCompleted
 import app.bean.isNotCompleted
+import app.components.bootstrap.spinner
 import app.components.task.task
 import app.components.taskeditor.taskEditor
 import app.components.tasklist.View.ACTIVE_TASKS
@@ -205,7 +206,7 @@ class TaskView: RComponent<TaskViewProps, TaskViewState>() {
             if (state.tasks == null) {
                 h3("tasks-loading") {
                     +"Loading tasks ... "
-                    i("fa fa-spinner fa-spin") { }
+                    spinner()
                 }
             } else {
                 renderTopButtons()

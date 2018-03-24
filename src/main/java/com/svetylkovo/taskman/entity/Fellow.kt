@@ -11,8 +11,5 @@ class Fellow {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id = 0L
-
-    var name = ""
     var url = ""
-    var tasks = emptyList<Task>()
 }
