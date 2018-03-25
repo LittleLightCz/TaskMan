@@ -51,3 +51,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.db
+taskman-frontend/yarn.lock
+TaskMan.json
