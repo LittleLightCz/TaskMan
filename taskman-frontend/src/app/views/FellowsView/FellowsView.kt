@@ -13,8 +13,6 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
-import kotlin.browser.window
-import kotlin.js.Promise
 
 interface FellowsViewProps : RProps {
     var history: dynamic
@@ -29,7 +27,6 @@ interface FellowsViewState: RState {
 
 class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
 
-    private var tasksRefreshIntervalID = 0
 
     override fun FellowsViewState.init() {
         fellows = emptyArray()
@@ -39,14 +36,6 @@ class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
 
     override fun componentDidMount() {
         fetchFellows()
-
-        tasksRefreshIntervalID = window.setInterval({
-            fetchFellows()
-        }, 15000)
-    }
-
-    override fun componentWillUnmount() {
-        window.clearInterval(tasksRefreshIntervalID)
     }
 
     private fun handleAddFellowUrlChanged(e: Event) {
@@ -68,8 +57,8 @@ class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
         .then { fetchFellows() }
     }
 
-    private fun fetchFellows(): Promise<Unit> {
-        return axios<Array<FellowBean>>(jsObject {
+    private fun fetchFellows() {
+        axios<Array<FellowBean>>(jsObject {
             url = "api/fellows"
         }).then {
             setState { fellows = it.data }
@@ -104,8 +93,11 @@ class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
     }
 
     private fun RBuilder.renderAddFellowButton() {
-        div("btn btn-success") {
-            attrs.onClickFunction = ::handleAddFellowClicked
+        button (classes = "btn btn-success") {
+            attrs {
+                disabled = state.addFellowUrl.isBlank()
+                onClickFunction = ::handleAddFellowClicked
+            }
             i("fa fa-plus") {}
             +" Add Fellow"
         }

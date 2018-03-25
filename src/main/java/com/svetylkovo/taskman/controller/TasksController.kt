@@ -32,6 +32,15 @@ object TasksController {
             call.respond(tasks)
         }
 
+        get("/api/tasks/unfinished") {
+            val tasks = session.createCriteria(Task::class.java)
+                .list()
+                .filterIsInstance<Task>()
+                .filter { it.completedDate == null }
+
+            call.respond(tasks)
+        }
+
         post("/api/tasks/new") {
             val task = call.receive<Task>().apply {
                 createdDate = Date()

@@ -3,3 +3,14 @@
     height: 500px;
     border-width: 2px !important;
 }
+
+.fellow .fellow-content {
+    overflow-y: auto;
+    height: 92%;
+}
+
+.fellow .fellow-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
