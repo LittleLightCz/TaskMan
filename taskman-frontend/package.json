@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "bootstrap": "^4.0.0-beta.3",
+    "core-js": "2.5.3",
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
     "moment": "^2.20.1",
@@ -15,15 +16,15 @@
     "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
-    "kotlin-compiler": "1.2.30",
-    "react-scripts-kotlin": "2.1.5"
+    "react-scripts-kotlin": "2.1.9"
   },
   "scripts": {
     "start": "react-scripts-kotlin start",
     "build": "react-scripts-kotlin build",
     "eject": "react-scripts-kotlin eject",
     "gen-idea-libs": "react-scripts-kotlin gen-idea-libs",
-    "get-types": "react-scripts-kotlin get-types --dest=src/types"
+    "get-types": "react-scripts-kotlin get-types --dest=src/types",
+    "postinstall": "npm run gen-idea-libs"
   },
   "proxy": "http://localhost:7900"
 }
