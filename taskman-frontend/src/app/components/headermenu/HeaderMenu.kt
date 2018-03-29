@@ -12,60 +12,87 @@ import org.w3c.dom.events.Event
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RBuilder
+import react.RComponent
+import react.RProps
+import react.RState
 import react.dom.*
 import kotlin.browser.document
 import kotlin.browser.window
 
-fun RBuilder.headerMenu() {
-    div("header-menu") {
-        div("dropdown dropleft") {
-            button(type = ButtonType.button, classes = "btn btn-outline-light" ) {
-                attrs["data-toggle"] = "dropdown"
-                i("fa fa-bars fa-lg") {}
-            }
-            div("dropdown-menu") {
-                a(href = "#", classes = "dropdown-item") {
-                    attrs.onClickFunction = ::handleImportClick
-                    +"Import"
-                }
-                a(href = "/api/tasks/export", classes = "dropdown-item") {
-                    +"Export"
-                }
-            }
-        }
+class HeaderMenu : RComponent<RProps, RState>() {
 
-        input(type = InputType.file) {
-            attrs.id = "importFile"
-            attrs.onChangeFunction = ::importSelectedFile
+    private fun importSelectedFile(e: Event) {
+        val target = e.target as HTMLInputElement
+
+        target.files?.get(0)?.let { file ->
+            val reader = FileReader()
+
+            reader.onload = {
+                val fileContent = reader.result
+
+                axios<String>(jsObject {
+                    url = "api/tasks/import"
+                    method = "post"
+                    data = fileContent
+                })
+                .then { window.location.reload() }
+                .catch { window.alert("Tasks import failed!") }
+
+                true
+            }
+
+            reader.readAsText(file)
         }
     }
-}
 
-private fun handleImportClick(e: Event) {
-    e.preventDefault()
-    document.getElementById("importFile").asDynamic().click()
-}
-
-private fun importSelectedFile(e: Event) {
-    val target = e.target as HTMLInputElement
-
-    target.files?.get(0)?.let { file ->
-        val reader = FileReader()
-
-        reader.onload = {
-            val fileContent = reader.result
-
-            axios<String>(jsObject {
-                url = "api/tasks/import"
-                method = "post"
-                data = fileContent
-            })
-            .then { window.location.reload() }
-            .catch { window.alert("Tasks import failed!") }
-
-            true
-        }
-
-        reader.readAsText(file)
+    private fun handleImportClick(e: Event) {
+        e.preventDefault()
+        document.getElementById("importFile").asDynamic().click()
     }
+
+    private fun handleShutdownClick(event: Event) {
+        axios<Unit>(jsObject {
+            url = "/api/shutdown"
+            method = "post"
+        })
+        .catch {} //swallow
+        .then { window.location.reload() }
+    }
+
+    override fun RBuilder.render() {
+        div("header-menu") {
+            div("dropdown dropleft") {
+                button(type = ButtonType.button, classes = "btn btn-outline-light" ) {
+                    attrs["data-toggle"] = "dropdown"
+                    i("fa fa-bars fa-lg") {}
+                }
+
+                div("dropdown-menu") {
+                    a(href = "#", classes = "dropdown-item") {
+                        attrs.onClickFunction = ::handleImportClick
+                        +"Import"
+                    }
+
+                    a(href = "/api/tasks/export", classes = "dropdown-item") {
+                        +"Export"
+                    }
+
+                    if (window.location.hostname == "localhost") {
+                        a(href = "#", classes = "dropdown-item") {
+                            attrs.onClickFunction = ::handleShutdownClick
+                            +"Shutdown"
+                        }
+                    }
+                }
+            }
+
+            input(type = InputType.file) {
+                attrs.id = "importFile"
+                attrs.onChangeFunction = ::importSelectedFile
+            }
+        }
+    }
+
 }
+
+fun RBuilder.headerMenu() = child(HeaderMenu::class) {}

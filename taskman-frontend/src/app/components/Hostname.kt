@@ -1,7 +1,7 @@
 package app.components
 
 import app.components.bootstrap.spinner
-import app.wrappers.axios.axios
+import app.shared.Backend
 import app.wrappers.clipboard.copyToClipboard
 import app.wrappers.toastify.Toastify
 import kotlinext.js.jsObject
@@ -19,16 +19,8 @@ interface HostnameState : RState {
 class Hostname : RComponent<RProps, HostnameState>() {
 
     override fun componentDidMount() {
-        loadHostname()
-    }
-
-    private fun loadHostname() {
-        axios<String>(jsObject {
-            url = "api/hostname"
-        }).then {
-            setState { hostname = it.data }
-        }.catch {
-            setState { hostname = "?unknown?" }
+        Backend.fetchHostname.then {
+            setState { hostname = it }
         }
     }
 

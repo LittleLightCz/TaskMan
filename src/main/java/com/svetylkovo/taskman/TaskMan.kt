@@ -16,6 +16,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
 import io.ktor.response.respond
 import io.ktor.routing.routing
+import io.ktor.server.engine.ShutDownUrl
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.jetty.Jetty
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -46,6 +47,13 @@ object TaskMan {
                     log.error("Error occurred!", cause)
                     call.respond(HttpStatusCode.InternalServerError, ExceptionUtils.getStackTrace(cause))
                 }
+            }
+
+            install(ShutDownUrl.ApplicationCallFeature) {
+                // The URL that will be intercepted
+                shutDownUrl = "/api/shutdown"
+                // A function that will be executed to get the exit code of the process
+                exitCodeSupplier = { 0 } // ApplicationCall.() -> Int
             }
 
             routing {

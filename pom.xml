@@ -81,6 +81,12 @@
 
         <dependency>
             <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-host-common</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.ktor</groupId>
             <artifactId>ktor-client-core</artifactId>
             <version>${ktor.version}</version>
         </dependency>

@@ -1,6 +1,7 @@
 package com.svetylkovo.taskman.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.svetylkovo.taskman.entity.Fellow
 import com.svetylkovo.taskman.entity.Task
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
@@ -33,14 +34,14 @@ object FellowsController {
         post("/api/fellows/unfinished") {
             val fellow = call.receive<Fellow>()
             val unfinishedTasksResponse = client.get<String>("${fellow.url}/api/tasks/unfinished")
-//            call.respond(mapper.readValue<List<Task>>(unfinishedTasksResponse))
+            call.respond(mapper.readValue<List<Task>>(unfinishedTasksResponse))
 
             //Mocked response
-            call.respond(
-                session.createCriteria(Task::class.java)
-                    .list()
-                    .filterIsInstance<Task>()
-                    .filter { it.completedDate == null })
+//            call.respond(
+//                session.createCriteria(Task::class.java)
+//                    .list()
+//                    .filterIsInstance<Task>()
+//                    .filter { it.completedDate == null })
         }
 
         post("/api/fellows/add") {
