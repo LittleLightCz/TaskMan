@@ -34,7 +34,13 @@ object FellowsController {
         post("/api/fellows/unfinished") {
             val fellow = call.receive<Fellow>()
             val unfinishedTasksResponse = client.get<String>("${fellow.url}/api/tasks/unfinished")
-            call.respond(mapper.readValue<List<Task>>(unfinishedTasksResponse))
+
+            val tasks = when {
+                unfinishedTasksResponse.isBlank() -> emptyList()
+                else -> mapper.readValue<List<Task>>(unfinishedTasksResponse)
+            }
+
+            call.respond(tasks)
 
             //Mocked response
 //            call.respond(

@@ -70,17 +70,20 @@ class HeaderMenu : RComponent<RProps, RState>() {
                 div("dropdown-menu") {
                     a(href = "#", classes = "dropdown-item") {
                         attrs.onClickFunction = ::handleImportClick
-                        +"Import"
+                        i("fa fa-fw fa-upload") { }
+                        +" Import"
                     }
 
                     a(href = "/api/tasks/export", classes = "dropdown-item") {
-                        +"Export"
+                        i("fa fa-fw fa-download") { }
+                        +" Export"
                     }
 
                     if (window.location.hostname == "localhost") {
                         a(href = "#", classes = "dropdown-item") {
                             attrs.onClickFunction = ::handleShutdownClick
-                            +"Shutdown"
+                            i("fa fa-fw fa-power-off") { }
+                            +" Shutdown"
                         }
                     }
                 }
