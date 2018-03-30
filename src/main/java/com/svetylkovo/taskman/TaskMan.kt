@@ -50,10 +50,8 @@ object TaskMan {
             }
 
             install(ShutDownUrl.ApplicationCallFeature) {
-                // The URL that will be intercepted
                 shutDownUrl = "/api/shutdown"
-                // A function that will be executed to get the exit code of the process
-                exitCodeSupplier = { 0 } // ApplicationCall.() -> Int
+                exitCodeSupplier = { 0 }
             }
 
             routing {

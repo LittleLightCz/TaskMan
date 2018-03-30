@@ -9,7 +9,7 @@
     <version>Fresh</version>
 
     <properties>
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.31</kotlin.version>
         <ktor.version>0.9.1</ktor.version>
     </properties>
 
