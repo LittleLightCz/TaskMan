@@ -2,11 +2,7 @@
 
 package app.wrappers.routing
 
-import react.RClass
-import react.RProps
-import react.RState
-import react.React.Component
-import react.ReactElement
+import react.*
 
 @JsName("HashRouter")
 external class HashRouterComponent : Component<RProps, RState> {

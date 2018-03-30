@@ -1,8 +1,8 @@
 package app.wrappers.routing
 
 import react.*
-import react.React.Component
 import kotlin.reflect.KClass
+
 
 fun RBuilder.hashRouter(handler: RHandler<RProps>) = child(HashRouterComponent::class, handler)
 

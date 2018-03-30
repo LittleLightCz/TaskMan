@@ -1,7 +1,6 @@
 package index
 
 import app.app
-import kotlinext.js.invoke
 import kotlinext.js.require
 import kotlinext.js.requireAll
 import react.dom.render
