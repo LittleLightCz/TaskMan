@@ -38,12 +38,12 @@ class App : RComponent<RProps, RState>() {
             switch {
                 route("/", exact = true) { routeResult: RouteResultProps<dynamic> ->
                     tasksView {
-                        attrs.history = routeResult.asDynamic().history
+                        attrs.history = routeResult.history
                     }
                 }
                 route("/fellows") { routeResult: RouteResultProps<dynamic> ->
                     fellowsView {
-                        attrs.history = routeResult.asDynamic().history
+                        attrs.history = routeResult.history
                     }
                 }
             }

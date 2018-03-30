@@ -13,9 +13,10 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
+import react.router.dom.RouteResultHistory
 
 interface FellowsViewProps : RProps {
-    var history: dynamic
+    var history: RouteResultHistory
 }
 
 interface FellowsViewState: RState {

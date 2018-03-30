@@ -16,6 +16,7 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
+import react.router.dom.RouteResultHistory
 import kotlin.browser.window
 import kotlin.js.Promise
 
@@ -33,7 +34,7 @@ interface TaskViewState: RState {
 }
 
 interface TaskViewProps: RProps {
-    var history: dynamic
+    var history: RouteResultHistory
 }
 
 class TaskView: RComponent<TaskViewProps, TaskViewState>() {
