@@ -1,9 +1,6 @@
 package app.components.task
 
-import app.bean.TaskBean
-import app.bean.getPoosCount
-import app.bean.isCompleted
-import app.bean.isNotCompleted
+import app.bean.*
 import app.components.bootstrap.spinner
 import app.components.error.error
 import app.components.poos.poos
@@ -48,13 +45,7 @@ class Task(props: TaskProps) : RComponent<TaskProps, TaskState>(props) {
             .find { it.value == props.task.priority }
             ?.key ?: "Unknown"
 
-    private fun getAlertClassType() = when (props.task.priority) {
-        1 -> "danger"
-        2 -> "warning"
-        3 -> "success"
-        4 -> "primary"
-        else -> "light"
-    }
+    private fun getAlertClassType() = props.task.getAlertClassType()
 
     private fun taskUpdateAction(action: () -> Promise<Unit>) {
         setState { updatingTask = true }

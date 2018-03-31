@@ -21,3 +21,11 @@ fun TaskBean.getPoosCount(): Int {
     val daysAgo = now.diff(createdDate, "days")
     return floor(daysAgo / 7).toInt()
 }
+
+fun TaskBean.getAlertClassType() = when (priority) {
+    1 -> "danger"
+    2 -> "warning"
+    3 -> "success"
+    4 -> "primary"
+    else -> "light"
+}
