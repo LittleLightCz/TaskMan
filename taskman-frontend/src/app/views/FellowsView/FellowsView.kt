@@ -54,7 +54,12 @@ class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
         }).catch {
             setState { error = it }
         }
-        .then { setState { addingFellow = false } }
+        .then {
+            setState {
+                addingFellow = false
+                addFellowUrl = ""
+            }
+        }
         .then { fetchFellows() }
     }
 
@@ -129,6 +134,7 @@ class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
                         attrs {
                             key = it.id.toString()
                             fellow = it
+                            refresh = { fetchFellows() }
                         }
                     }
                 }

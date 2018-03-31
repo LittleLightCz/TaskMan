@@ -7,12 +7,15 @@ import app.components.error.error
 import app.components.fellowTaskThumbnail.fellowTaskThumbnail
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
+import kotlinx.html.js.onClickFunction
+import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
 import kotlin.browser.window
 
 interface FellowProps : RProps {
     var fellow: FellowBean
+    var refresh: () -> Unit
 }
 
 interface FellowState : RState {
@@ -74,6 +77,18 @@ class Fellow : RComponent<FellowProps, FellowState>() {
         }
     }
 
+    private fun handleRemoveFellowClick(event: Event) {
+        axios<Unit>(jsObject {
+            url = "api/fellows/remove"
+            method = "post"
+            data = props.fellow
+        }).then {
+            props.refresh()
+        }.catch {
+            setState { error = it }
+        }
+    }
+
     private fun RBuilder.renderFellowTasks() {
         div("fellow-content") {
             state.fellowTasks.forEachIndexed { index, task ->
@@ -102,7 +117,17 @@ class Fellow : RComponent<FellowProps, FellowState>() {
 
     override fun RBuilder.render() {
         div("fellow border border-black rounded m-2") {
-            h5("bg-black text-white m-0 p-2") { +props.fellow.url }
+            div("fellow-title bg-black text-white") {
+                h5("m-0") { +props.fellow.url }
+                i("fa fa-trash m-3 clickable") {
+                    attrs {
+                        jsStyle {
+                            marginLeft = "auto"
+                        }
+                        onClickFunction = ::handleRemoveFellowClick
+                    }
+                }
+            }
 
             with(state) {
                 when {

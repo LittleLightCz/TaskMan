@@ -4,6 +4,17 @@
     border-width: 2px !important;
 }
 
+.fellow .fellow-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fellow .fellow-title h5 {
+    flex-grow: 1;
+    padding-left: 42px;
+}
+
 .fellow .fellow-content {
     overflow-y: auto;
     height: 92%;

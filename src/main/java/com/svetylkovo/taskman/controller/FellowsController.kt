@@ -1,7 +1,6 @@
 package com.svetylkovo.taskman.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.svetylkovo.taskman.entity.Fellow
 import com.svetylkovo.taskman.entity.Task
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
@@ -9,6 +8,8 @@ import com.svetylkovo.taskman.session.transaction
 import io.ktor.application.call
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
@@ -23,7 +24,14 @@ object FellowsController {
     private val session = obtainHibernateSession()
     private val mapper = jacksonObjectMapper()
 
-    private val client = HttpClient(Apache)
+    private val client = HttpClient(Apache) {
+        install(JsonFeature) {
+            serializer = GsonSerializer {
+                serializeNulls()
+                disableHtmlEscaping()
+            }
+        }
+    }
 
     fun Routing.fellowsController() {
         get("/api/fellows") {
@@ -33,21 +41,8 @@ object FellowsController {
 
         post("/api/fellows/unfinished") {
             val fellow = call.receive<Fellow>()
-            val unfinishedTasksResponse = client.get<String>("${fellow.url}/api/tasks/unfinished")
-
-            val tasks = when {
-                unfinishedTasksResponse.isBlank() -> emptyList()
-                else -> mapper.readValue<List<Task>>(unfinishedTasksResponse)
-            }
-
-            call.respond(tasks)
-
-            //Mocked response
-//            call.respond(
-//                session.createCriteria(Task::class.java)
-//                    .list()
-//                    .filterIsInstance<Task>()
-//                    .filter { it.completedDate == null })
+            val unfinishedTasks = client.get<List<Task>>("${fellow.url}/api/tasks/unfinished")
+            call.respond(unfinishedTasks)
         }
 
         post("/api/fellows/add") {
@@ -55,6 +50,18 @@ object FellowsController {
 
             session.transaction {
                 persist(fellow)
+            }
+
+            call.respond(HttpStatusCode.OK)
+        }
+
+        post("/api/fellows/remove") {
+            val fellow = call.receive<Fellow>()
+
+            session.transaction {
+                clear()
+                evict(fellow)
+                delete(fellow)
             }
 
             call.respond(HttpStatusCode.OK)
