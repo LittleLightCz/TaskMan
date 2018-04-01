@@ -11,6 +11,7 @@ import app.extensions.getSuspendedTasks
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.title
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -133,13 +134,21 @@ class Fellow : RComponent<FellowProps, FellowState>() {
     override fun RBuilder.render() {
         div("fellow border border-black rounded m-2") {
             div("fellow-title bg-black text-white") {
-                h5("m-0") { +props.fellow.url }
+                h5("m-0") {
+                    with(props.fellow) {
+                        a(href = url, target = "_blank", classes = "fellow-link") {
+                            attrs.title = "Open fellow's TaskMan URL in new tab"
+                            +url
+                        }
+                    }
+                }
                 i("fa fa-trash m-3 clickable") {
                     attrs {
                         jsStyle {
                             marginLeft = "auto"
                         }
                         onClickFunction = ::handleRemoveFellowClick
+                        title = "Remove fellow"
                     }
                 }
             }
