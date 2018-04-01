@@ -1,13 +1,14 @@
 package app.components.tasklist
 
 import app.bean.TaskBean
-import app.bean.isCompleted
-import app.bean.isNotCompleted
 import app.components.bootstrap.spinner
 import app.components.task.task
 import app.components.taskeditor.taskEditor
 import app.components.tasklist.View.ACTIVE_TASKS
 import app.components.tasklist.View.FINISHED_TASKS
+import app.extensions.getActiveTasks
+import app.extensions.getFinishedTasks
+import app.extensions.getSuspendedTasks
 import app.wrappers.axios.axios
 import app.wrappers.moment.moment
 import kotlinext.js.jsObject
@@ -69,17 +70,6 @@ class TaskView: RComponent<TaskViewProps, TaskViewState>() {
 
     private fun getTasks() = state.tasks ?: emptyArray()
 
-    private fun getActiveTasks() = getTasks().filter { !it.suspended && it.isNotCompleted() }
-            .sortedWith(
-                    compareBy({ it.priority }, { it.createdDate })
-            )
-
-    private fun getFinishedTasks() = getTasks().filter { it.isCompleted() }
-            .sortedByDescending { it.completedDate }
-
-    private fun getSuspendedTasks() = getTasks().filter { it.suspended }
-            .sortedByDescending { it.createdDate }
-
     private fun handleAddNewTaskClick(event: Event) = setState { showAddTask = true }
 
     private fun RBuilder.renderNavigationBar() {
@@ -103,11 +93,11 @@ class TaskView: RComponent<TaskViewProps, TaskViewState>() {
     }
 
     private fun RBuilder.renderActiveTasks() {
-        renderTasks(getActiveTasks(), "There are no tasks. Let's add some!")
+        renderTasks(getTasks().getActiveTasks(), "There are no tasks. Let's add some!")
     }
 
     private fun RBuilder.renderFinishedTasks() {
-        val finishedTasks = getFinishedTasks()
+        val finishedTasks = getTasks().getFinishedTasks()
 
         if (finishedTasks.isEmpty()) {
             h5 { +"There are no finishedTasks. Let's finish some!" }
@@ -158,7 +148,7 @@ class TaskView: RComponent<TaskViewProps, TaskViewState>() {
     }
 
     private fun RBuilder.renderSuspendedTasks() {
-        val tasks = getSuspendedTasks()
+        val tasks = getTasks().getSuspendedTasks()
 
         if (!tasks.isEmpty()) {
             div("mt-3") {

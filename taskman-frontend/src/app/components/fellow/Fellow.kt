@@ -5,6 +5,9 @@ import app.bean.TaskBean
 import app.components.bootstrap.spinner
 import app.components.error.error
 import app.components.fellowTaskThumbnail.fellowTaskThumbnail
+import app.components.tasklist.catImage
+import app.extensions.getActiveTasks
+import app.extensions.getSuspendedTasks
 import app.wrappers.axios.axios
 import kotlinext.js.jsObject
 import kotlinx.html.js.onClickFunction
@@ -90,9 +93,21 @@ class Fellow : RComponent<FellowProps, FellowState>() {
     }
 
     private fun RBuilder.renderFellowTasks() {
+        val fellowTasks = state.fellowTasks
+
         div("fellow-content") {
-            state.fellowTasks.forEachIndexed { index, task ->
+            fellowTasks.getActiveTasks().forEachIndexed { index, task ->
                 fellowTaskThumbnail(index+1, task)
+            }
+
+            fellowTasks.getSuspendedTasks().also {
+                if (it.isNotEmpty()) {
+                    img(src = catImage, classes = "m-1") {
+                        attrs.width = "40px"
+                    }
+                }
+            }.forEach {
+                fellowTaskThumbnail(0, it)
             }
         }
     }
