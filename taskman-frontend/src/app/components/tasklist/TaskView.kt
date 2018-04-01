@@ -170,14 +170,14 @@ class TaskView: RComponent<TaskViewProps, TaskViewState>() {
             }
         } else {
             div("tasklist-top-buttons") {
-                renderShowFellowsButton()
                 renderAddTaskButton()
+                renderShowFellowsButton()
             }
         }
     }
 
     private fun RBuilder.renderShowFellowsButton() {
-        button(type = ButtonType.button, classes = "btn btn-dark") {
+        button(type = ButtonType.button, classes = "btn btn-dark ml-1") {
             attrs.onClickFunction = { props.history.push("/fellows") }
             i("fa fa-child") {}
             +" Fellows"
