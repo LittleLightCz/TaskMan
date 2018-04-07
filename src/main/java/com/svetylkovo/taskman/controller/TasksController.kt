@@ -131,7 +131,7 @@ object TasksController {
         }
     }
 
-    fun Routing.updateTaskWhen(postPath: String, taskMutation: (Task) -> Unit) {
+    private fun Routing.updateTaskWhen(postPath: String, taskMutation: (Task) -> Unit) {
         post(postPath) {
             call.parameters["id"]?.let { id -> updateTask(id.toLong(), taskMutation) }
             call.respond(OK)
