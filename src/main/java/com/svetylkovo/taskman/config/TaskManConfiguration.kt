@@ -4,4 +4,5 @@ class TaskManConfiguration {
     val finishedTasksDaysLifespan = 8
     val backupsDir = "backups"
     val keepBackupsCount = 5
+    val backupIntervalMinutes = 60
 }
