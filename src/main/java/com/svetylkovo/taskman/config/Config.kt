@@ -15,8 +15,10 @@ object Config {
     val taskmanConfiguration by lazy {
         val configFile = File(configFileName)
 
-        if (configFile.exists()) mapper.readValue(configFile)
-        else TaskManConfiguration().also {
+        when {
+            configFile.exists() -> mapper.readValue(configFile)
+            else -> TaskManConfiguration()
+        }.also {
             mapper.writeValue(configFile, it)
         }
     }
