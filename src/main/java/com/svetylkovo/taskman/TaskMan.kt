@@ -2,6 +2,7 @@ package com.svetylkovo.taskman
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.svetylkovo.taskman.config.Config.taskmanConfiguration
+import com.svetylkovo.taskman.controller.BackupsController.backupsController
 import com.svetylkovo.taskman.controller.FellowsController.fellowsController
 import com.svetylkovo.taskman.controller.TasksController.tasksController
 import com.svetylkovo.taskman.scheduled.ScheduledMaintanenceTask
@@ -62,6 +63,7 @@ object TaskMan {
 
                 tasksController()
                 fellowsController()
+                backupsController()
             }
         }
 

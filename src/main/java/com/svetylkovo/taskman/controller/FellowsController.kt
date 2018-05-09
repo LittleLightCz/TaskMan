@@ -1,6 +1,5 @@
 package com.svetylkovo.taskman.controller
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.svetylkovo.taskman.entity.Fellow
 import com.svetylkovo.taskman.entity.Task
 import com.svetylkovo.taskman.session.HibernateSessionFactory.obtainHibernateSession
@@ -22,7 +21,6 @@ import io.ktor.routing.post
 object FellowsController {
 
     private val session = obtainHibernateSession()
-    private val mapper = jacksonObjectMapper()
 
     private val client = HttpClient(Apache) {
         install(JsonFeature) {
