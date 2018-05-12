@@ -3,6 +3,7 @@ package app
 import app.components.headermenu.headerMenu
 import app.components.hostname
 import app.components.tasklist.tasksView
+import app.views.BackupsView.backupsView
 import app.views.FellowsView.fellowsView
 import kotlinext.js.js
 import react.RBuilder
@@ -44,6 +45,10 @@ class App : RComponent<RProps, RState>() {
                 route("/fellows") { routeResult: RouteResultProps<dynamic> ->
                     fellowsView {
                         attrs.history = routeResult.history
+                    }
+                }
+                route("/backups") {
+                    backupsView {
                     }
                 }
             }

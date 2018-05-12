@@ -79,6 +79,11 @@ class HeaderMenu : RComponent<RProps, RState>() {
                         +" Export"
                     }
 
+                    a(href = "/backups", classes = "dropdown-item") {
+                        i("fa fa-fw fa-undo") { }
+                        +" Backups"
+                    }
+
                     if (window.location.hostname == "localhost") {
                         a(href = "#", classes = "dropdown-item") {
                             attrs.onClickFunction = ::handleShutdownClick

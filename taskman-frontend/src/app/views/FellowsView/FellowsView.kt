@@ -28,7 +28,6 @@ interface FellowsViewState: RState {
 
 class FellowsView : RComponent<FellowsViewProps, FellowsViewState>() {
 
-
     override fun FellowsViewState.init() {
         fellows = emptyArray()
         addingFellow = false
