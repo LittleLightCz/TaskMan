@@ -3,18 +3,24 @@ package app.views.BackupsView
 import app.bean.BackupFileBean
 import app.components.bootstrap.spinner
 import app.wrappers.axios.axios
+import app.wrappers.moment.moment
 import kotlinext.js.jsObject
+import kotlinx.html.js.onClickFunction
 import react.*
-import react.dom.div
-import react.dom.h2
+import react.dom.*
+import react.router.dom.RouteResultHistory
 import kotlin.js.Promise
+
+interface BackupsViewProps : RProps {
+    var history: RouteResultHistory
+}
 
 interface BackupsViewState : RState {
     var backups: Array<BackupFileBean>?
 }
 
 
-class BackupsView : RComponent<RProps, BackupsViewState>() {
+class BackupsView : RComponent<BackupsViewProps, BackupsViewState>() {
 
     override fun componentDidMount() {
         fetchBackups()
@@ -36,20 +42,49 @@ class BackupsView : RComponent<RProps, BackupsViewState>() {
     }
 
     private fun RBuilder.renderBackups() {
-        state.backups?.forEach {
-            div {
-                +it.name
+        state.backups?.run {
+            ul("list-group backup-list-group") {
+                sortedByDescending { it.lastModified }
+                    .forEach { renderBackupItem(it) }
             }
         } ?: renderLoading()
     }
 
-    override fun RBuilder.render() {
-        h2 { +"Backups" }
+    private fun RBuilder.renderBackupItem(backup: BackupFileBean) {
+        li("list-group-item backup-list-item") {
+            strong("backup-name text-left") { +backup.name }
+            span { +moment(backup.lastModified).format("MMMM Do hh:mm").toString() }
+            renderRestoreButton()
+        }
+    }
 
-        renderBackups()
+    private fun RBuilder.renderRestoreButton() {
+        div("btn btn-success ml-2") {
+            attrs.onClickFunction = { props.history.push("/") }
+            i("fa fa-undo") {}
+            +" Restore"
+        }
+    }
+
+    private fun RBuilder.renderBackButton() {
+        div("btn btn-dark m-2") {
+            attrs.onClickFunction = { props.history.push("/") }
+            i("fa fa-reply") {}
+            +" Back"
+        }
+    }
+
+    override fun RBuilder.render() {
+        div("m-1") {
+            h2 { +"Backups" }
+
+            renderBackups()
+
+            renderBackButton()
+        }
     }
 
 }
 
 
-fun RBuilder.backupsView(handler: RHandler<RProps>) = child(BackupsView::class, handler)
+fun RBuilder.backupsView(handler: RHandler<BackupsViewProps>) = child(BackupsView::class, handler)

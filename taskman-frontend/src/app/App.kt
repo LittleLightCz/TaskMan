@@ -47,8 +47,9 @@ class App : RComponent<RProps, RState>() {
                         attrs.history = routeResult.history
                     }
                 }
-                route("/backups") {
+                route("/backups") { routeResult: RouteResultProps<dynamic> ->
                     backupsView {
+                        attrs.history = routeResult.history
                     }
                 }
             }

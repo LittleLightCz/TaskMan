@@ -1,0 +1,13 @@
+.backup-list-group {
+    width: 600px;
+    margin: auto;
+}
+
+.backup-name {
+    flex-grow: 1;
+}
+
+.backup-list-item {
+    display: flex;
+    align-items: center;
+}
