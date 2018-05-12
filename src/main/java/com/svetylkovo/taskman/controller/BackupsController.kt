@@ -40,17 +40,16 @@ object BackupsController {
                 }
             )
         }
-
     }
 
-    private fun makeBackup() {
+    private fun createBackup() {
 
         println("Creating backup ...")
 
         val backupFileName = "Backup_${System.currentTimeMillis()}.zip"
         val backupFile = Paths.get(backupsDir.name, backupFileName).toFile()
 
-        val backup = createBackup()
+        val backup = createBackupBean()
 
         ZipOutputStream(backupFile.outputStream()).use { zip ->
             val entry = ZipEntry("backup.json")
@@ -74,7 +73,7 @@ object BackupsController {
             }
     }
 
-    private fun createBackup(): Backup {
+    private fun createBackupBean(): Backup {
         val tasks = session.createCriteria(Task::class.java).list().filterIsInstance<Task>()
         val fellows = session.createCriteria(Fellow::class.java).list().filterIsInstance<Fellow>()
         return Backup(tasks, fellows)
@@ -86,7 +85,7 @@ object BackupsController {
         Observable.interval(period, period, TimeUnit.MINUTES)
             .subscribe {
                 try {
-                    makeBackup()
+                    createBackup()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
